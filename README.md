@@ -61,9 +61,9 @@ SignalViewer is an enterprise-grade, full-stack platform for the interactive exp
 ┌──────────────────────────────────────────────────────────────────┐
 │                        BROWSER (React + Vite)                    │
 │                                                                  │
-│   Landing ──► Medical ──► Acoustic ──► Finance ──► Microbiome   │
+│   Landing ──► Medical ──► Acoustic ──► Finance ──► Microbiome    │
 │                                                                  │
-│   Plotly.js charts  │  File uploads  │  Real-time playback      │
+│   Plotly.js charts  │  File uploads  │  Real-time playback       │
 └──────────────────────────────┬───────────────────────────────────┘
                                │ HTTP REST  (JSON)
                                │ http://localhost:8000
@@ -77,7 +77,7 @@ SignalViewer is an enterprise-grade, full-stack platform for the interactive exp
 │  ├─ finance_routes     ├─ finance_service    ├─ EEG SVM          │
 │  └─ bio_routes         └─ bio_service        ├─ Finance GRU (×3) │
 │                                              ├─ IBD GRU          │
-│  uploads/  (temp — auto-deleted after use)   └─ HMP2 ref CSV    │
+│  uploads/  (temp — auto-deleted after use)   └─ HMP2 ref CSV     │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
