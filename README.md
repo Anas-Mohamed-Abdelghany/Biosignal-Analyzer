@@ -817,8 +817,8 @@ SignalViewer/
 │   │   ├── ecg_rf_model.pkl
 │   │   ├── eeg_model_final.keras
 │   │   ├── eeg_svm_model.pkl
-│   │   ├── train_mean.npy             # optional
-│   │   ├── train_std.npy              # optional
+│   │   ├── train_mean.npy             
+│   │   ├── train_std.npy              
 │   │   ├── ibd_signal_detector.keras
 │   │   ├── hmp2_reference.csv
 │   │   ├── finance_stock_model.keras
@@ -830,55 +830,29 @@ SignalViewer/
 │   ├── test_sim.py                    # Standalone pipeline test (no HTTP server needed)
 │   └── plot_sim.py                    # Standalone signal plot test
 │
-├── Frontend/
-│   └── app/
-│       ├── src/
-│       │   ├── pages/
-│       │   │   ├── Landing.jsx        # Module selector — 5 domain cards
-│       │   │   ├── Medical.jsx        # ECG + EEG viewer (4 modes, playback, AI results)
-│       │   │   ├── Acoustic.jsx       # Doppler simulator + analysis + drone detection
-│       │   │   ├── Finance.jsx        # Candlestick + SMA + volume + GRU forecast
-│       │   │   └── Microbiome.jsx     # IBD patient CSV analysis, per-patient cards
-│       │   │
-│       │   └── components/
-│       │       ├── Sidebar.jsx        # Shared collapsible left sidebar wrapper
-│       │       └── ui/
-│       │           ├── ToggleTabs.jsx         # Horizontal tab switcher
-│       │           ├── SliderControl.jsx      # Labeled range slider with live value
-│       │           ├── FileUpload.jsx         # Drag-and-drop + click file input
-│       │           ├── StatCard.jsx           # Titled result card container
-│       │           ├── ChannelControl.jsx     # Per-channel visibility / color / thickness
-│       │           └── ColormapSelector.jsx   # Plotly colormap dropdown
-│       │
-│       ├── package.json
-│       ├── vite.config.js
-│       └── tailwind.config.js
-│
-└── docs/
-    └── images/                        # ← Place all screenshots here
-        ├── landing.png
-        ├── medical_landing.png
-        ├── ecg_continuous_multipanel.png
-        ├── ecg_xor.png
-        ├── ecg_polar.png
-        ├── ecg_trajectory.png
-        ├── ecg_ai_results.png
-        ├── eeg_tab_selector.png
-        ├── eeg_results_cards.png
-        ├── eeg_waveform.png
-        ├── acoustic_landing.png
-        ├── acoustic_simulator.png
-        ├── acoustic_analysis.png
-        ├── acoustic_drone.png
-        ├── finance_overview.png
-        ├── finance_candlestick.png
-        ├── finance_forecast.png
-        ├── microbiome_upload.png
-        ├── microbiome_results.png
-        ├── microbiome_patient_card.png
-        ├── microbiome_timeline.png
-        ├── microbiome_probs.png
-        └── microbiome_summary.png
+└── Frontend/
+   └── app/
+       ├── src/
+       │   ├── pages/
+       │   │   ├── Landing.jsx        # Module selector — 5 domain cards
+       │   │   ├── Medical.jsx        # ECG + EEG viewer (4 modes, playback, AI results)
+       │   │   ├── Acoustic.jsx       # Doppler simulator + analysis + drone detection
+       │   │   ├── Finance.jsx        # Candlestick + SMA + volume + GRU forecast
+       │   │   └── Microbiome.jsx     # IBD patient CSV analysis, per-patient cards
+       │   │
+       │   └── components/
+       │       ├── Sidebar.jsx        # Shared collapsible left sidebar wrapper
+       │       └── ui/
+       │           ├── ToggleTabs.jsx         # Horizontal tab switcher
+       │           ├── SliderControl.jsx      # Labeled range slider with live value
+       │           ├── FileUpload.jsx         # Drag-and-drop + click file input
+       │           ├── StatCard.jsx           # Titled result card container
+       │           ├── ChannelControl.jsx     # Per-channel visibility / color / thickness
+       │           └── ColormapSelector.jsx   # Plotly colormap dropdown
+       │
+       ├── package.json
+       ├── vite.config.js
+       └── tailwind.config.js
 ```
 ---
 <div align="center">
