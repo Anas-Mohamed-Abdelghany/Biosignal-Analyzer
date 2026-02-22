@@ -245,240 +245,6 @@ python Backend/plot_sim.py
 curl http://localhost:8000/
 # → open http://localhost:8000/docs for interactive API explorer
 ```
-
----
-
-## 📡 API Reference
-
-Base URL: `http://localhost:8000` — all endpoints are prefixed with `/api/{domain}`.
-
----
-
-### 🫀 Medical — ECG
-
-| Method | Endpoint | Body | Description |
-|---|---|---|---|
-| `POST` | `/api/medical/process` | `file: .csv` | ECG CSV → AI classification + signals |
-| `POST` | `/api/medical/process-wfdb` | `dat_file`, `meta` JSON, optional `xyz_file` | WFDB binary → classification + signals |
-
-**Response**
-```json
-{
-  "analysis": {
-    "ai_model":   { "prediction": "NORM", "confidence": 0.94 },
-    "classic_ml": { "prediction": "NORM", "confidence": 0.88 }
-  },
-  "signals": { "lead_I": [...], "lead_II": [...] },
-  "time": [0, 1, 2, ...]
-}
-```
-
----
-
-### 🧠 EEG
-
-| Method | Endpoint | Body | Description |
-|---|---|---|---|
-| `POST` | `/api/eeg/process` | `file: .npy or .csv` | CNN + SVM ensemble prediction |
-
-**Response**
-```json
-{
-  "analysis": {
-    "cnn": {
-      "prediction": "Depression", "confidence": 0.87,
-      "probabilities": { "ADFSU": 0.04, "Depression": 0.87, "REEG-PD": 0.06, "BrainLat": 0.03 },
-      "window_agreement": 0.91, "n_windows": 127
-    },
-    "svm": {
-      "prediction": "Depression", "confidence": 0.79,
-      "probabilities": { "ADFSU": 0.07, "Depression": 0.79, "REEG-PD": 0.09, "BrainLat": 0.05 }
-    },
-    "verdict": { "agree": true, "prediction": "Depression", "confidence": 0.87, "tiebreak": null }
-  },
-  "signals": { "EEG_CH1": [...], "EEG_CH19": [...] },
-  "time": [0, 1, 2, ...]
-}
-```
-
----
-
-### 🔊 Acoustic
-
-| Method | Endpoint | Body | Description |
-|---|---|---|---|
-| `POST` | `/api/acoustic/simulate` | `{ frequency, velocity }` JSON | Generate Doppler waveform |
-| `GET`  | `/api/acoustic/doppler/datasets` | — | List pre-loaded recordings |
-| `GET`  | `/api/acoustic/doppler/analyze/{filename}` | — | Analyze a dataset recording |
-| `POST` | `/api/acoustic/doppler/upload` | `file: .wav/.mp3` | Upload audio → velocity analysis |
-| `POST` | `/api/acoustic/drone/upload` | `file: audio` | Upload audio → drone classification |
-
-**Doppler upload response**
-```json
-{
-  "waveform":    { "time": [...], "amplitude": [...] },
-  "fft":         { "frequencies": [...], "magnitudes": [...] },
-  "spectrogram": { "times": [...], "frequencies": [...], "power": [[...]] },
-  "doppler": {
-    "estimated_velocity_kmh": 67.4, "estimated_frequency_hz": 440,
-    "approach_freq_hz": 512, "recede_freq_hz": 388,
-    "freq_time_axis": [...], "freq_over_time": [...],
-    "algorithm": "STFT Peak Tracking"
-  },
-  "statistics": { "duration_s": 8.2, "sample_rate": 22050, "rms": 0.142, "snr_db": 18.3, "peak_to_peak": 1.94 }
-}
-```
-
-**Drone upload response**
-```json
-{
-  "filename": "audio.wav",
-  "classification": { "label": "Drone Detected", "confidence": 0.91, "score": 4.2, "reasons": ["High ZCR", "Dominant frequency in rotor band"] },
-  "waveform":  { "time": [...], "amplitude": [...] },
-  "fft":       { "frequencies": [...], "magnitudes": [...] },
-  "features":  { "spectral_centroid": 1842.3, "spectral_bandwidth": 920.1, "spectral_rolloff": 3200.5, "dominant_freq": 210.0, "zero_crossing_rate": 0.082 },
-  "statistics": { "duration_s": 4.1, "sample_rate": 44100, "rms": 0.211, "snr_db": 14.7 }
-}
-```
-
----
-
-### 📈 Finance
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/finance/history/{asset}` | Historical OHLCV data |
-| `GET` | `/api/finance/forecast/{asset}` | GRU price forecast + confidence interval |
-
-**Forecast response**
-```json
-{
-  "asset": "EUR-USD", "horizon": 3,
-  "forecast": [1.089, 1.091, 1.088],
-  "upper":    [1.094, 1.097, 1.093],
-  "lower":    [1.084, 1.085, 1.083],
-  "dates":    ["2024-06-10", "2024-06-11", "2024-06-12"]
-}
-```
-
----
-
-### 🧬 Microbiome
-
-| Method | Endpoint | Body | Description |
-|---|---|---|---|
-| `POST` | `/api/bio/analyze` | `file: .csv` | Patient CSV → per-patient IBD predictions |
-
-**Response**
-```json
-{
-  "patients": [
-    {
-      "participant_id": "PATIENT_001", "num_weeks": 20,
-      "diagnosis": "Healthy", "confidence": 92.4,
-      "probabilities": { "Healthy": 0.924, "Crohn's Disease": 0.051, "Ulcerative Colitis": 0.025 },
-      "top_taxa": [{ "name": "Faecalibacterium prausnitzii", "mean_abundance": 44.2 }],
-      "weekly_data": { "weeks": [0, 2, 4], "taxa": ["Faecalibacterium prausnitzii"], "values": [[44.2, 43.1]] },
-      "fecalcal": [50.0, 50.0]
-    }
-  ]
-}
-```
-
----
-
-## 📂 Project Structure
-
-```
-SignalViewer/
-│
-├── Backend/
-│   ├── app.py                         # FastAPI entry point, route registration, CORS config
-│   ├── requirements.txt               # All Python dependencies
-│   │
-│   ├── routes/
-│   │   ├── medical_routes.py          # POST /api/medical/process, /process-wfdb
-│   │   ├── eeg_routes.py              # POST /api/eeg/process
-│   │   ├── acoustic_routes.py         # POST/GET /api/acoustic/*
-│   │   ├── finance_routes.py          # GET /api/finance/history, /forecast
-│   │   └── bio_routes.py              # POST /api/bio/analyze
-│   │
-│   ├── services/
-│   │   ├── medical_service.py         # ECG parsing, CNN + RandomForest inference
-│   │   ├── eeg_service.py             # EEG sliding window, CNN + SVM ensemble, auto shape-detect
-│   │   ├── acoustic_service.py        # Doppler STFT estimation, drone spectral features
-│   │   ├── finance_service.py         # OHLCV loading, GRU forecasting per asset class
-│   │   └── bio_service.py             # Patient sequencing, IBD GRU inference, scaler auto-fit
-│   │
-│   ├── models/                        # ← All .keras / .pkl / .npy / .csv files here
-│   │   ├── ecg_model.keras
-│   │   ├── ecg_rf_model.pkl
-│   │   ├── eeg_model_final.keras
-│   │   ├── eeg_svm_model.pkl
-│   │   ├── train_mean.npy             # optional
-│   │   ├── train_std.npy              # optional
-│   │   ├── ibd_signal_detector.keras
-│   │   ├── hmp2_reference.csv
-│   │   ├── finance_stock_model.keras
-│   │   ├── finance_currency_model.keras
-│   │   └── finance_metal_model.keras
-│   │
-│   ├── uploads/                       # Temp storage — each file deleted after its request
-│   ├── data/                          # Static datasets (Doppler recordings, etc.)
-│   ├── test_sim.py                    # Standalone pipeline test (no HTTP server needed)
-│   └── plot_sim.py                    # Standalone signal plot test
-│
-├── Frontend/
-│   └── app/
-│       ├── src/
-│       │   ├── pages/
-│       │   │   ├── Landing.jsx        # Module selector — 5 domain cards
-│       │   │   ├── Medical.jsx        # ECG + EEG viewer (4 modes, playback, AI results)
-│       │   │   ├── Acoustic.jsx       # Doppler simulator + analysis + drone detection
-│       │   │   ├── Finance.jsx        # Candlestick + SMA + volume + GRU forecast
-│       │   │   └── Microbiome.jsx     # IBD patient CSV analysis, per-patient cards
-│       │   │
-│       │   └── components/
-│       │       ├── Sidebar.jsx        # Shared collapsible left sidebar wrapper
-│       │       └── ui/
-│       │           ├── ToggleTabs.jsx         # Horizontal tab switcher
-│       │           ├── SliderControl.jsx      # Labeled range slider with live value
-│       │           ├── FileUpload.jsx         # Drag-and-drop + click file input
-│       │           ├── StatCard.jsx           # Titled result card container
-│       │           ├── ChannelControl.jsx     # Per-channel visibility / color / thickness
-│       │           └── ColormapSelector.jsx   # Plotly colormap dropdown
-│       │
-│       ├── package.json
-│       ├── vite.config.js
-│       └── tailwind.config.js
-│
-└── docs/
-    └── images/                        # ← Place all screenshots here
-        ├── landing.png
-        ├── medical_landing.png
-        ├── ecg_continuous_multipanel.png
-        ├── ecg_xor.png
-        ├── ecg_polar.png
-        ├── ecg_trajectory.png
-        ├── ecg_ai_results.png
-        ├── eeg_tab_selector.png
-        ├── eeg_results_cards.png
-        ├── eeg_waveform.png
-        ├── acoustic_landing.png
-        ├── acoustic_simulator.png
-        ├── acoustic_analysis.png
-        ├── acoustic_drone.png
-        ├── finance_overview.png
-        ├── finance_candlestick.png
-        ├── finance_forecast.png
-        ├── microbiome_upload.png
-        ├── microbiome_results.png
-        ├── microbiome_patient_card.png
-        ├── microbiome_timeline.png
-        ├── microbiome_probs.png
-        └── microbiome_summary.png
-```
-
 ---
 
 ## 📘 Module Documentation
@@ -901,6 +667,239 @@ Backend/models/
 
 ---
 
+---
+
+## 📡 API Reference
+
+Base URL: `http://localhost:8000` — all endpoints are prefixed with `/api/{domain}`.
+
+---
+
+### 🫀 Medical — ECG
+
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/medical/process` | `file: .csv` | ECG CSV → AI classification + signals |
+| `POST` | `/api/medical/process-wfdb` | `dat_file`, `meta` JSON, optional `xyz_file` | WFDB binary → classification + signals |
+
+**Response**
+```json
+{
+  "analysis": {
+    "ai_model":   { "prediction": "NORM", "confidence": 0.94 },
+    "classic_ml": { "prediction": "NORM", "confidence": 0.88 }
+  },
+  "signals": { "lead_I": [...], "lead_II": [...] },
+  "time": [0, 1, 2, ...]
+}
+```
+
+---
+
+### 🧠 EEG
+
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/eeg/process` | `file: .npy or .csv` | CNN + SVM ensemble prediction |
+
+**Response**
+```json
+{
+  "analysis": {
+    "cnn": {
+      "prediction": "Depression", "confidence": 0.87,
+      "probabilities": { "ADFSU": 0.04, "Depression": 0.87, "REEG-PD": 0.06, "BrainLat": 0.03 },
+      "window_agreement": 0.91, "n_windows": 127
+    },
+    "svm": {
+      "prediction": "Depression", "confidence": 0.79,
+      "probabilities": { "ADFSU": 0.07, "Depression": 0.79, "REEG-PD": 0.09, "BrainLat": 0.05 }
+    },
+    "verdict": { "agree": true, "prediction": "Depression", "confidence": 0.87, "tiebreak": null }
+  },
+  "signals": { "EEG_CH1": [...], "EEG_CH19": [...] },
+  "time": [0, 1, 2, ...]
+}
+```
+
+---
+
+### 🔊 Acoustic
+
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/acoustic/simulate` | `{ frequency, velocity }` JSON | Generate Doppler waveform |
+| `GET`  | `/api/acoustic/doppler/datasets` | — | List pre-loaded recordings |
+| `GET`  | `/api/acoustic/doppler/analyze/{filename}` | — | Analyze a dataset recording |
+| `POST` | `/api/acoustic/doppler/upload` | `file: .wav/.mp3` | Upload audio → velocity analysis |
+| `POST` | `/api/acoustic/drone/upload` | `file: audio` | Upload audio → drone classification |
+
+**Doppler upload response**
+```json
+{
+  "waveform":    { "time": [...], "amplitude": [...] },
+  "fft":         { "frequencies": [...], "magnitudes": [...] },
+  "spectrogram": { "times": [...], "frequencies": [...], "power": [[...]] },
+  "doppler": {
+    "estimated_velocity_kmh": 67.4, "estimated_frequency_hz": 440,
+    "approach_freq_hz": 512, "recede_freq_hz": 388,
+    "freq_time_axis": [...], "freq_over_time": [...],
+    "algorithm": "STFT Peak Tracking"
+  },
+  "statistics": { "duration_s": 8.2, "sample_rate": 22050, "rms": 0.142, "snr_db": 18.3, "peak_to_peak": 1.94 }
+}
+```
+
+**Drone upload response**
+```json
+{
+  "filename": "audio.wav",
+  "classification": { "label": "Drone Detected", "confidence": 0.91, "score": 4.2, "reasons": ["High ZCR", "Dominant frequency in rotor band"] },
+  "waveform":  { "time": [...], "amplitude": [...] },
+  "fft":       { "frequencies": [...], "magnitudes": [...] },
+  "features":  { "spectral_centroid": 1842.3, "spectral_bandwidth": 920.1, "spectral_rolloff": 3200.5, "dominant_freq": 210.0, "zero_crossing_rate": 0.082 },
+  "statistics": { "duration_s": 4.1, "sample_rate": 44100, "rms": 0.211, "snr_db": 14.7 }
+}
+```
+
+---
+
+### 📈 Finance
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/finance/history/{asset}` | Historical OHLCV data |
+| `GET` | `/api/finance/forecast/{asset}` | GRU price forecast + confidence interval |
+
+**Forecast response**
+```json
+{
+  "asset": "EUR-USD", "horizon": 3,
+  "forecast": [1.089, 1.091, 1.088],
+  "upper":    [1.094, 1.097, 1.093],
+  "lower":    [1.084, 1.085, 1.083],
+  "dates":    ["2024-06-10", "2024-06-11", "2024-06-12"]
+}
+```
+
+---
+
+### 🧬 Microbiome
+
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/bio/analyze` | `file: .csv` | Patient CSV → per-patient IBD predictions |
+
+**Response**
+```json
+{
+  "patients": [
+    {
+      "participant_id": "PATIENT_001", "num_weeks": 20,
+      "diagnosis": "Healthy", "confidence": 92.4,
+      "probabilities": { "Healthy": 0.924, "Crohn's Disease": 0.051, "Ulcerative Colitis": 0.025 },
+      "top_taxa": [{ "name": "Faecalibacterium prausnitzii", "mean_abundance": 44.2 }],
+      "weekly_data": { "weeks": [0, 2, 4], "taxa": ["Faecalibacterium prausnitzii"], "values": [[44.2, 43.1]] },
+      "fecalcal": [50.0, 50.0]
+    }
+  ]
+}
+```
+
+---
+
+## 📂 Project Structure
+
+```
+SignalViewer/
+│
+├── Backend/
+│   ├── app.py                         # FastAPI entry point, route registration, CORS config
+│   ├── requirements.txt               # All Python dependencies
+│   │
+│   ├── routes/
+│   │   ├── medical_routes.py          # POST /api/medical/process, /process-wfdb
+│   │   ├── eeg_routes.py              # POST /api/eeg/process
+│   │   ├── acoustic_routes.py         # POST/GET /api/acoustic/*
+│   │   ├── finance_routes.py          # GET /api/finance/history, /forecast
+│   │   └── bio_routes.py              # POST /api/bio/analyze
+│   │
+│   ├── services/
+│   │   ├── medical_service.py         # ECG parsing, CNN + RandomForest inference
+│   │   ├── eeg_service.py             # EEG sliding window, CNN + SVM ensemble, auto shape-detect
+│   │   ├── acoustic_service.py        # Doppler STFT estimation, drone spectral features
+│   │   ├── finance_service.py         # OHLCV loading, GRU forecasting per asset class
+│   │   └── bio_service.py             # Patient sequencing, IBD GRU inference, scaler auto-fit
+│   │
+│   ├── models/                        # ← All .keras / .pkl / .npy / .csv files here
+│   │   ├── ecg_model.keras
+│   │   ├── ecg_rf_model.pkl
+│   │   ├── eeg_model_final.keras
+│   │   ├── eeg_svm_model.pkl
+│   │   ├── train_mean.npy             # optional
+│   │   ├── train_std.npy              # optional
+│   │   ├── ibd_signal_detector.keras
+│   │   ├── hmp2_reference.csv
+│   │   ├── finance_stock_model.keras
+│   │   ├── finance_currency_model.keras
+│   │   └── finance_metal_model.keras
+│   │
+│   ├── uploads/                       # Temp storage — each file deleted after its request
+│   ├── data/                          # Static datasets (Doppler recordings, etc.)
+│   ├── test_sim.py                    # Standalone pipeline test (no HTTP server needed)
+│   └── plot_sim.py                    # Standalone signal plot test
+│
+├── Frontend/
+│   └── app/
+│       ├── src/
+│       │   ├── pages/
+│       │   │   ├── Landing.jsx        # Module selector — 5 domain cards
+│       │   │   ├── Medical.jsx        # ECG + EEG viewer (4 modes, playback, AI results)
+│       │   │   ├── Acoustic.jsx       # Doppler simulator + analysis + drone detection
+│       │   │   ├── Finance.jsx        # Candlestick + SMA + volume + GRU forecast
+│       │   │   └── Microbiome.jsx     # IBD patient CSV analysis, per-patient cards
+│       │   │
+│       │   └── components/
+│       │       ├── Sidebar.jsx        # Shared collapsible left sidebar wrapper
+│       │       └── ui/
+│       │           ├── ToggleTabs.jsx         # Horizontal tab switcher
+│       │           ├── SliderControl.jsx      # Labeled range slider with live value
+│       │           ├── FileUpload.jsx         # Drag-and-drop + click file input
+│       │           ├── StatCard.jsx           # Titled result card container
+│       │           ├── ChannelControl.jsx     # Per-channel visibility / color / thickness
+│       │           └── ColormapSelector.jsx   # Plotly colormap dropdown
+│       │
+│       ├── package.json
+│       ├── vite.config.js
+│       └── tailwind.config.js
+│
+└── docs/
+    └── images/                        # ← Place all screenshots here
+        ├── landing.png
+        ├── medical_landing.png
+        ├── ecg_continuous_multipanel.png
+        ├── ecg_xor.png
+        ├── ecg_polar.png
+        ├── ecg_trajectory.png
+        ├── ecg_ai_results.png
+        ├── eeg_tab_selector.png
+        ├── eeg_results_cards.png
+        ├── eeg_waveform.png
+        ├── acoustic_landing.png
+        ├── acoustic_simulator.png
+        ├── acoustic_analysis.png
+        ├── acoustic_drone.png
+        ├── finance_overview.png
+        ├── finance_candlestick.png
+        ├── finance_forecast.png
+        ├── microbiome_upload.png
+        ├── microbiome_results.png
+        ├── microbiome_patient_card.png
+        ├── microbiome_timeline.png
+        ├── microbiome_probs.png
+        └── microbiome_summary.png
+```
+---
 <div align="center">
 Built with ⚡ FastAPI · React · TensorFlow · Plotly.js · scikit-learn
 </div>
