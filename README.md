@@ -961,35 +961,6 @@ Backend/models/
 | `docs/images/microbiome_summary.png` | 3-card summary row at top |
 
 ---
-
-## 🗂️ Complete Screenshot Index — All Modules
-
-| File | Module | What to Capture |
-|---|---|---|
-| `docs/images/landing.png` | Landing | All 5 module cards |
-| `docs/images/medical_landing.png` | Medical | ECG/EEG signal type selector |
-| `docs/images/ecg_continuous_multipanel.png` | ECG | Multi-panel continuous view |
-| `docs/images/ecg_xor.png` | ECG | XOR mode + energy bar chart |
-| `docs/images/ecg_polar.png` | ECG | Polar periodicity plot |
-| `docs/images/ecg_trajectory.png` | ECG | Phase-space trajectory |
-| `docs/images/ecg_ai_results.png` | ECG | AI + Classic ML result cards |
-| `docs/images/eeg_tab_selector.png` | EEG | Medical module with EEG selected |
-| `docs/images/eeg_results_cards.png` | EEG | CNN + SVM result cards |
-| `docs/images/eeg_waveform.png` | EEG | 19-channel waveform |
-| `docs/images/acoustic_landing.png` | Acoustic | All 3 tabs visible |
-| `docs/images/acoustic_simulator.png` | Acoustic | Waveform + frequency chart + audio |
-| `docs/images/acoustic_analysis.png` | Acoustic | Waveform + FFT + Doppler curve + spectrogram |
-| `docs/images/acoustic_drone.png` | Acoustic | Drone results + spectral features bar chart |
-| `docs/images/finance_overview.png` | Finance | Asset selector + candlestick |
-| `docs/images/finance_candlestick.png` | Finance | Candlestick + SMA-20 + SMA-50 |
-| `docs/images/finance_forecast.png` | Finance | GRU forecast + confidence band |
-| `docs/images/microbiome_upload.png` | Microbiome | Empty state |
-| `docs/images/microbiome_results.png` | Microbiome | All patient cards |
-| `docs/images/microbiome_patient_card.png` | Microbiome | Single patient card |
-| `docs/images/microbiome_timeline.png` | Microbiome | Taxa timeline chart |
-| `docs/images/microbiome_probs.png` | Microbiome | Probability bar chart |
-| `docs/images/microbiome_summary.png` | Microbiome | 3-card summary row |
-
 ---
 
 <div align="center">
