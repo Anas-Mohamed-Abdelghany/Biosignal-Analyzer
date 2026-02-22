@@ -578,20 +578,6 @@ Phase-space trajectory of Channel A vs Channel B.
 
 ---
 
-## Screenshot Index — ECG
-
-| File | What to Capture |
-|---|---|
-| `docs/images/medical_landing.png` | Module with ECG/EEG selector |
-| `docs/images/ecg_continuous_multipanel.png` | Multi-panel continuous view |
-| `docs/images/ecg_xor.png` | XOR mode with energy bars |
-| `docs/images/ecg_polar.png` | Polar periodicity plot |
-| `docs/images/ecg_trajectory.png` | Phase-space trajectory |
-| `docs/images/ecg_ai_results.png` | AI + Classic ML result cards |
-
----
----
-
 # 🧠 EEG Signal Viewer — Neurological Classification
 
 > **Module:** `Medical.jsx` (EEG tab) · `eeg_routes.py` · `eeg_service.py`
@@ -687,17 +673,6 @@ Backend/models/
 
 ---
 
-## Screenshot Index — EEG
-
-| File | What to Capture |
-|---|---|
-| `docs/images/eeg_tab_selector.png` | Medical module with EEG selected |
-| `docs/images/eeg_results_cards.png` | CNN + SVM result cards in sidebar |
-| `docs/images/eeg_waveform.png` | 19-channel waveform in main panel |
-
----
----
-
 # 🔊 Acoustic Signal Viewer — Doppler & Drone Detection
 
 > **Module:** `Acoustic.jsx` · `acoustic_routes.py` · `acoustic_service.py`
@@ -767,18 +742,6 @@ Classifies audio as drone or non-drone using spectral feature analysis.
 
 ---
 
-## Screenshot Index — Acoustic
-
-| File | What to Capture |
-|---|---|
-| `docs/images/acoustic_landing.png` | Module with all 3 tabs |
-| `docs/images/acoustic_simulator.png` | Simulator: waveform + frequency + audio player |
-| `docs/images/acoustic_analysis.png` | Analysis: 4 charts + results card |
-| `docs/images/acoustic_drone.png` | Drone: results + spectral features chart |
-
----
----
-
 # 📈 Finance Signal Viewer — Market Analysis & Forecasting
 
 > **Module:** `Finance.jsx` · `finance_routes.py` · `finance_service.py`
@@ -832,17 +795,6 @@ Backend/models/
 └── finance_metal_model.keras
 ```
 
----
-
-## Screenshot Index — Finance
-
-| File | What to Capture |
-|---|---|
-| `docs/images/finance_overview.png` | Asset selector + candlestick chart |
-| `docs/images/finance_candlestick.png` | Candlestick + SMA-20 + SMA-50 |
-| `docs/images/finance_forecast.png` | GRU forecast + confidence band |
-
----
 ---
 
 # 🧬 Microbiome Signal Viewer — IBD Classification
@@ -947,20 +899,6 @@ Backend/models/
 
 > **Reference CSV fallback priority:** named `hmp2_reference.csv` → any `.csv` in `models/` → uploaded file itself. For production accuracy always provide the training CSV.
 
----
-
-## Screenshot Index — Microbiome
-
-| File | What to Capture |
-|---|---|
-| `docs/images/microbiome_upload.png` | Empty state before upload |
-| `docs/images/microbiome_results.png` | Full results with patient cards |
-| `docs/images/microbiome_patient_card.png` | Single patient card — all sections |
-| `docs/images/microbiome_timeline.png` | Taxa timeline chart |
-| `docs/images/microbiome_probs.png` | Probability bar chart |
-| `docs/images/microbiome_summary.png` | 3-card summary row at top |
-
----
 ---
 
 <div align="center">
