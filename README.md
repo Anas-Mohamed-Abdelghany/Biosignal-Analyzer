@@ -12,10 +12,9 @@
 
 **A full-stack platform for high-performance processing, visualization, and AI-powered analysis of multi-domain signal data.**
 
-<!-- FIGURE 1: Landing Page Screenshot -->
-<!-- Replace the line below with your actual screenshot -->
+<!-- FIGURE: Landing Page -->
 <!-- ![Landing Page](docs/images/landing.png) -->
-> 📸 *Place a screenshot of the landing page here: `docs/images/landing.png`*
+> 📸 *Screenshot of the SignalViewer landing page showing all module cards: `docs/images/landing.png`*
 
 </div>
 
@@ -24,222 +23,130 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
-- [Live Modules](#-live-modules)
-  - [Medical Signal Viewer](#-medical-signal-viewer-ecg--eeg)
-  - [Acoustic Signal Viewer](#-acoustic-signal-viewer)
-  - [Finance Signal Viewer](#-finance-signal-viewer)
-  - [Microbiome Signal Viewer](#-microbiome-signal-viewer)
 - [System Architecture](#-system-architecture)
 - [Tech Stack](#-tech-stack)
-- [Installation](#-installation--deployment)
+- [Installation & Deployment](#-installation--deployment)
 - [API Reference](#-api-reference)
-- [Model Details](#-ml-model-details)
-- [File Format Guide](#-file-format-guide)
 - [Project Structure](#-project-structure)
+- [Module Documentation](#-module-documentation)
+  - [Medical — ECG](#-medical-signal-viewer--ecg-analysis)
+  - [EEG](#-eeg-signal-viewer--neurological-classification)
+  - [Acoustic](#-acoustic-signal-viewer--doppler--drone-detection)
+  - [Finance](#-finance-signal-viewer--market-analysis--forecasting)
+  - [Microbiome](#-microbiome-signal-viewer--ibd-classification)
+- [Complete Screenshot Index](#-complete-screenshot-index--all-modules)
 
 ---
 
 ## 🌐 Overview
 
-SignalViewer is an enterprise-grade, full-stack platform engineered for the interactive exploration and AI-assisted analysis of signals across five scientific and financial domains. It combines a high-performance async Python backend with a reactive modern web interface.
+SignalViewer is an enterprise-grade, full-stack platform for the interactive exploration and AI-assisted analysis of signals across five scientific and financial domains. It combines a high-performance asynchronous Python backend with a reactive modern web interface, enabling real-time visualization and machine learning inference directly in the browser.
 
-### Core Capabilities
+### Domain Coverage
 
-| Capability | Details |
-|---|---|
-| **Cross-Domain Coverage** | Medical (ECG/EEG), Acoustic, Financial, Microbiome |
-| **AI Inference** | CNN + SVM ensemble (EEG), GRU sequence model (IBD), ML classifiers |
-| **Visualization Engine** | Plotly.js — interactive charts, heatmaps, spectrograms, polar plots |
-| **Real-time Playback** | Animated signal scrubbing with zoom and speed controls |
-| **File Support** | CSV, NPY, WAV, MP3, WFDB (.hea + .dat) |
-| **API Architecture** | FastAPI async REST, auto-generated OpenAPI docs |
-
----
-
-## 🧩 Live Modules
-
-### 🫀 Medical Signal Viewer (ECG + EEG)
-
-The most feature-rich module — supports both ECG and EEG signal types with a multi-mode visualization engine and dual-model AI inference.
-
-<!-- FIGURE 2: Medical Module — ECG Multi-Panel View -->
-<!-- ![Medical ECG Multi-Panel](docs/images/medical_ecg_multipanel.png) -->
-> 📸 *Place a screenshot of the ECG multi-panel view here: `docs/images/medical_ecg_multipanel.png`*
-
-**ECG Features:**
-- Upload `.csv`, `.hea + .dat` (WFDB binary), or `.xyz` (Frank lead) files
-- Up to 20-lead simultaneous visualization
-- **4 viewer modes:** Continuous, XOR Analysis, Polar Periodicity, Trajectory (Phase Space)
-- Animated playback with adjustable speed (0.25× – 4×) and zoom
-- Multi-panel or overlay display
-- Per-channel color, thickness, and visibility controls
-- CNN (deep learning) + Random Forest (classic ML) classification
-
-<!-- FIGURE 3: Medical Module — ECG Viewer Modes -->
-<!-- ![ECG Viewer Modes](docs/images/medical_ecg_modes.png) -->
-> 📸 *Place a side-by-side of the 4 viewer modes (Continuous / XOR / Polar / Trajectory): `docs/images/medical_ecg_modes.png`*
-
-**EEG Features:**
-- Upload `.npy` (NumPy array) or `.csv` files
-- Accepts shapes: `(T, 19)`, `(19, T)`, or `(N, T, 19)` — auto-reshaped
-- Sliding window pipeline: 992-sample windows, 50% overlap
-- **CNN + SVM ensemble** with per-window soft voting
-- 4-class IBD classification: `ADFSU`, `Depression`, `REEG-PD`, `BrainLat`
-- Window agreement score and confidence breakdown
-
-<!-- FIGURE 4: EEG Analysis Results -->
-<!-- ![EEG Results Panel](docs/images/medical_eeg_results.png) -->
-> 📸 *Place a screenshot of EEG analysis results with CNN/SVM predictions: `docs/images/medical_eeg_results.png`*
-
-| ECG Classes | EEG Classes |
-|---|---|
-| NORM, MI, STTC, CD, HYP | ADFSU, Depression, REEG-PD, BrainLat |
-
----
-
-### 🔊 Acoustic Signal Viewer
-
-Three-tab acoustic analysis suite covering simulation, real-signal analysis, and drone classification.
-
-<!-- FIGURE 5: Acoustic Module — Doppler Simulator -->
-<!-- ![Doppler Simulator](docs/images/acoustic_simulator.png) -->
-> 📸 *Place a screenshot of the Doppler simulator with waveform + frequency charts: `docs/images/acoustic_simulator.png`*
-
-**Tab 1 — Doppler Simulator:**
-- Interactive sliders for horn frequency (100–2000 Hz) and vehicle speed (10–200 km/h)
-- Backend-generated waveform with audio playback (WAV synthesized in-browser)
-- Observed frequency-over-time chart with source frequency reference line
-
-**Tab 2 — Doppler Analysis:**
-- Select from pre-loaded dataset recordings or upload your own `.wav` / `.mp3`
-- Waveform, FFT spectrum, frequency-over-time Doppler curve, and spectrogram
-- Estimated vehicle speed, approach/recede frequencies, SNR, and RMS statistics
-
-<!-- FIGURE 6: Acoustic Module — Doppler Analysis -->
-<!-- ![Doppler Analysis](docs/images/acoustic_analysis.png) -->
-> 📸 *Place a screenshot showing waveform + spectrogram + Doppler curve: `docs/images/acoustic_analysis.png`*
-
-**Tab 3 — Drone Detection:**
-- Upload any audio file (WAV, MP3, OGG, FLAC)
-- Spectral feature extraction: centroid, bandwidth, rolloff, dominant frequency, ZCR
-- Classification: `Drone Detected` / `Possible Drone` / `No Drone`
-- Waveform + FFT + spectral features bar chart
-
-<!-- FIGURE 7: Drone Detection Results -->
-<!-- ![Drone Detection](docs/images/acoustic_drone.png) -->
-> 📸 *Place a screenshot of drone detection results with feature bar chart: `docs/images/acoustic_drone.png`*
-
----
-
-### 📈 Finance Signal Viewer
-
-Financial market analysis with candlestick charting, technical indicators, and multi-asset AI forecasting.
-
-<!-- FIGURE 8: Finance Module — Candlestick + SMA -->
-<!-- ![Finance Candlestick](docs/images/finance_candlestick.png) -->
-> 📸 *Place a screenshot of the candlestick chart with SMA overlays: `docs/images/finance_candlestick.png`*
-
-**Supported Asset Classes:**
-
-| Category | Assets | Forecast Horizon |
+| Module | Signal Type | AI Task |
 |---|---|---|
-| 📈 Stocks | ABTX, AAT | 5 days |
-| 💱 Currencies | EUR/USD, USD/JPY | 3 days |
-| 🪙 Metals | Gold, Silver | 30 days |
-
-**Features:**
-- Candlestick OHLC charts with SMA-20 and SMA-50 overlays
-- Volume bar chart
-- GRU-based price forecasting with confidence intervals
-- Historical data viewer with adjustable lookback window
-- Statistical summary: mean, std, min/max, daily change
-
-<!-- FIGURE 9: Finance Forecast Chart -->
-<!-- ![Finance Forecast](docs/images/finance_forecast.png) -->
-> 📸 *Place a screenshot of the GRU forecast with confidence band: `docs/images/finance_forecast.png`*
-
----
-
-### 🧬 Microbiome Signal Viewer
-
-Longitudinal gut microbiome analysis with IBD classification using a GRU sequence model trained on the HMP2 dataset.
-
-<!-- FIGURE 10: Microbiome Module — Upload + Results -->
-<!-- ![Microbiome Results](docs/images/microbiome_results.png) -->
-> 📸 *Place a screenshot showing patient cards with diagnosis badges: `docs/images/microbiome_results.png`*
-
-**Features:**
-- Upload patient CSV files (multi-patient supported in one file)
-- Per-patient longitudinal sequence → GRU model → diagnosis prediction
-- 3-class IBD classification: `Healthy`, `Crohn's Disease`, `Ulcerative Colitis`
-- Top-5 contributing taxa ranked by mean abundance with bar visualization
-- Timeline chart of taxa abundance across weeks
-- Probability breakdown per class with confidence bar
-- Auto-detects `Participant ID`, `week_num`, and microbiome feature columns
-
-<!-- FIGURE 11: Microbiome — Per-Patient Card Detail -->
-<!-- ![Microbiome Patient Card](docs/images/microbiome_patient_card.png) -->
-> 📸 *Place a close-up of a single patient card with timeline + probability charts: `docs/images/microbiome_patient_card.png`*
-
-**Diagnosis Color Coding:**
-
-| Diagnosis | Color |
-|---|---|
-| ✅ Healthy | Green |
-| 🔴 Crohn's Disease | Red |
-| 🟡 Ulcerative Colitis | Amber |
+| 🫀 Medical — ECG | Electrocardiogram (12–20 lead) | Disease classification (5 classes) |
+| 🧠 Medical — EEG | 19-channel EEG | Neurological classification (4 classes) |
+| 🔊 Acoustic | Audio (WAV, MP3, OGG, FLAC) | Doppler velocity estimation + drone detection |
+| 📈 Finance | OHLCV market data | GRU price forecasting |
+| 🧬 Microbiome | Longitudinal microbiome CSV | IBD classification (3 classes) |
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        FRONTEND (React)                      │
-│  Landing → Medical │ Acoustic │ Finance │ Microbiome        │
-│  Plotly.js visualizations  │  File uploads  │  AI results   │
-└────────────────────────────┬────────────────────────────────┘
-                             │ HTTP REST (FastAPI)
-                             │ http://localhost:8000
-┌────────────────────────────▼────────────────────────────────┐
-│                        BACKEND (FastAPI)                     │
-│  routes/         services/          models/                  │
-│  ├ medical       ├ medical_service  ├ eeg_model_final.keras  │
-│  ├ acoustic      ├ eeg_service      ├ eeg_svm_model.pkl      │
-│  ├ finance       ├ acoustic_service ├ ibd_signal_detector    │
-│  ├ bio           ├ bio_service      ├ finance GRU models     │
-│  └ eeg           └ finance_service  └ hmp2_reference.csv     │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                        BROWSER (React + Vite)                    │
+│                                                                  │
+│   Landing ──► Medical ──► Acoustic ──► Finance ──► Microbiome   │
+│                                                                  │
+│   Plotly.js charts  │  File uploads  │  Real-time playback      │
+└──────────────────────────────┬───────────────────────────────────┘
+                               │ HTTP REST  (JSON)
+                               │ http://localhost:8000
+┌──────────────────────────────▼───────────────────────────────────┐
+│                        FASTAPI BACKEND                           │
+│                                                                  │
+│  routes/               services/             models/             │
+│  ├─ medical_routes     ├─ medical_service    ├─ ECG CNN          │
+│  ├─ eeg_routes         ├─ eeg_service        ├─ ECG RandomForest │
+│  ├─ acoustic_routes    ├─ acoustic_service   ├─ EEG CNN          │
+│  ├─ finance_routes     ├─ finance_service    ├─ EEG SVM          │
+│  └─ bio_routes         └─ bio_service        ├─ Finance GRU (×3) │
+│                                              ├─ IBD GRU          │
+│  uploads/  (temp — auto-deleted after use)   └─ HMP2 ref CSV    │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-<!-- FIGURE 12: Architecture Diagram -->
-<!-- Replace with a proper architecture diagram if you have one -->
-<!-- ![Architecture](docs/images/architecture.png) -->
-> 📸 *Optionally place a detailed architecture diagram here: `docs/images/architecture.png`*
+### Request Lifecycle
+
+```
+User uploads file
+      │
+      ▼
+React (FileUpload component)
+  POST multipart/form-data
+      │
+      ▼
+FastAPI route
+  → validate extension
+  → save to uploads/
+  → call service.analyze()
+      │
+      ▼
+Service layer
+  → lazy-load model (singleton)
+  → preprocess signal
+  → run inference
+  → build response dict
+      │
+      ▼
+Route returns JSONResponse
+  → delete temp file (finally block)
+      │
+      ▼
+React renders charts + result cards
+```
+
+### Controller–Service Pattern
+
+Every domain enforces a strict two-layer backend structure:
+
+- **Route layer** (`routes/`) — HTTP only: validate input, call service, return JSON, clean up uploads
+- **Service layer** (`services/`) — all logic: model loading, preprocessing, feature extraction, inference
+
+This ensures services can be tested independently without running the HTTP server.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend
+
 | Library | Purpose |
 |---|---|
-| **FastAPI** | Async REST API framework |
-| **TensorFlow / Keras** | CNN (EEG), GRU (IBD, Finance) model inference |
-| **scikit-learn** | SVM classifier, StandardScaler, LabelEncoder |
-| **NumPy / Pandas** | Signal processing and data manipulation |
-| **SciPy** | Statistical feature extraction (skewness, kurtosis) |
-| **Librosa** | Audio feature extraction for acoustic analysis |
-| **Joblib** | Model serialization (.pkl) |
+| **FastAPI** | Async REST API framework, auto OpenAPI docs |
+| **Uvicorn** | ASGI production server |
+| **TensorFlow / Keras** | CNN (ECG, EEG), GRU (Finance, IBD) inference |
+| **scikit-learn** | SVM, RandomForest, StandardScaler, LabelEncoder |
+| **NumPy** | Array operations, sliding windows, padding |
+| **Pandas** | CSV parsing, per-patient data grouping |
+| **SciPy** | Skewness, kurtosis for EEG feature extraction |
+| **Librosa** | Audio loading, STFT, spectral feature extraction |
+| **Joblib** | `.pkl` model serialization / deserialization |
+| **Python-multipart** | File upload handling in FastAPI |
 
 ### Frontend
+
 | Library | Purpose |
 |---|---|
 | **React 18** | Component-based UI framework |
-| **Vite** | Build tool and dev server |
-| **Tailwind CSS** | Utility-first styling |
-| **Plotly.js** | Interactive scientific charts |
-| **React Router** | Client-side navigation |
+| **Vite 4** | Build tool and HMR dev server |
+| **Tailwind CSS 3** | Utility-first styling |
+| **Plotly.js** | Interactive charts, heatmaps, polar plots, spectrograms |
+| **React Router 6** | Client-side routing between modules |
 
 ---
 
@@ -247,150 +154,235 @@ Longitudinal gut microbiome analysis with IBD classification using a GRU sequenc
 
 ### Prerequisites
 
-- **Python** `^3.8`
-- **Node.js** `^16.x`
-- **pip** and **npm**
+| Tool | Version |
+|---|---|
+| Python | `^3.8` |
+| Node.js | `^16.x` |
+| pip | latest |
+| npm | latest |
 
-### 1. Backend Setup
+---
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-org/signal-viewer.git
+cd signal-viewer
+```
+
+---
+
+### 2. Backend Setup
 
 ```bash
 cd Backend
 
-# Create and activate virtual environment
+# Create and activate a virtual environment (recommended)
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+source venv/bin/activate          # Windows: venv\Scripts\activate
 
-# Install dependencies
+# Install all dependencies
 pip install -r requirements.txt
 
 # Start the API server
 python app.py
 ```
 
-> API runs at `http://localhost:8000`
-> Interactive docs at `http://localhost:8000/docs`
+> API available at `http://localhost:8000`
+> Interactive API docs at `http://localhost:8000/docs`
 
-### 2. Frontend Setup
+---
+
+### 3. Frontend Setup
 
 ```bash
 cd Frontend/app
 
-# Install dependencies
+# Install Node dependencies
 npm install
 
 # Start the Vite dev server
 npm run dev
 ```
 
-> App runs at `http://localhost:5173`
+> Web app available at `http://localhost:5173`
 
-### 3. Models Setup
+---
 
-Place the following files in `Backend/models/`:
+### 4. Model Files Setup
+
+Place all trained model and reference files in `Backend/models/`:
 
 ```
 Backend/models/
-├── eeg_model_final.keras         # EEG CNN model
-├── eeg_svm_model.pkl             # EEG SVM model
-├── ibd_signal_detector.keras     # Microbiome GRU model
-├── hmp2_reference.csv            # HMP2 training reference CSV (any .csv works)
-├── finance_stock_model.keras     # Finance GRU — stocks
-├── finance_currency_model.keras  # Finance GRU — currencies
-└── finance_metal_model.keras     # Finance GRU — metals
+├── ecg_model.keras                # ECG — CNN classifier
+├── ecg_rf_model.pkl               # ECG — Random Forest classifier
+├── eeg_model_final.keras          # EEG — CNN model
+├── eeg_svm_model.pkl              # EEG — SVM pipeline (StandardScaler + SVC)
+├── train_mean.npy                 # EEG — optional normalization mean
+├── train_std.npy                  # EEG — optional normalization std
+├── ibd_signal_detector.keras      # Microbiome — Bidirectional GRU
+├── hmp2_reference.csv             # Microbiome — any .csv from training data
+├── finance_stock_model.keras      # Finance — GRU for stocks
+├── finance_currency_model.keras   # Finance — GRU for currencies
+└── finance_metal_model.keras      # Finance — GRU for metals
+```
+
+> **EEG:** Model input shape is auto-detected via a dummy forward pass at load time — no manual constant adjustment needed.
+
+> **Microbiome:** The service scans `models/` for any `.csv` automatically. No renaming required — just copy your training CSV there as-is.
+
+---
+
+### 5. Verify Setup
+
+```bash
+# Test signal processing without the HTTP server
+python Backend/test_sim.py
+python Backend/plot_sim.py
+
+# Confirm API is running
+curl http://localhost:8000/
+# → open http://localhost:8000/docs for interactive API explorer
 ```
 
 ---
 
 ## 📡 API Reference
 
-### Medical / ECG
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/medical/process` | Upload ECG CSV → AI analysis + signals |
-| `POST` | `/api/medical/process-wfdb` | Upload WFDB (.dat + meta + .xyz) → analysis |
-
-### EEG
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/eeg/process` | Upload `.npy` or `.csv` → CNN+SVM prediction |
-
-### Acoustic
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/acoustic/simulate` | Generate Doppler waveform from params |
-| `GET` | `/api/acoustic/doppler/datasets` | List available Doppler recordings |
-| `GET` | `/api/acoustic/doppler/analyze/{filename}` | Analyze a dataset recording |
-| `POST` | `/api/acoustic/doppler/upload` | Upload audio → Doppler analysis |
-| `POST` | `/api/acoustic/drone/upload` | Upload audio → drone classification |
-
-### Finance
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/finance/history/{asset}` | Get historical OHLC data |
-| `GET` | `/api/finance/forecast/{asset}` | Get GRU price forecast |
-
-### Microbiome
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/bio/analyze` | Upload patient CSV → IBD diagnosis per patient |
+Base URL: `http://localhost:8000` — all endpoints are prefixed with `/api/{domain}`.
 
 ---
 
-## 🤖 ML Model Details
+### 🫀 Medical — ECG
 
-### EEG Disease Classification
-| Property | Value |
-|---|---|
-| **Architecture** | CNN (Conv2D → MaxPool → Flatten → Dense) |
-| **Ensemble** | CNN soft-vote + SVM (Pipeline: StandardScaler → SVC) |
-| **Input** | `(N_windows, 992, 19, 1)` — sliding window, 50% overlap |
-| **Classes** | ADFSU, Depression, REEG-PD, BrainLat |
-| **Normalization** | Per-channel global z-score across all windows |
-| **Output** | Per-class probabilities → argmax + window agreement score |
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/medical/process` | `file: .csv` | ECG CSV → AI classification + signals |
+| `POST` | `/api/medical/process-wfdb` | `dat_file`, `meta` JSON, optional `xyz_file` | WFDB binary → classification + signals |
 
-### IBD Microbiome Classification
-| Property | Value |
-|---|---|
-| **Architecture** | Bidirectional GRU (64 units) + Dropout(0.3) + Dense |
-| **Input** | `(1, 45, N_microbe_features)` — padded patient sequence |
-| **Classes** | Healthy, Crohn's Disease, Ulcerative Colitis |
-| **Training Data** | HMP2 IBD Metagenomics Atlas |
-| **Normalization** | StandardScaler fitted on training reference CSV |
-| **Class Balancing** | Oversampling to equal class counts |
-
-### Finance Forecasting
-| Property | Value |
-|---|---|
-| **Architecture** | GRU sequence model |
-| **Assets** | Stocks (5-day), Currencies (3-day), Metals (30-day) |
-| **Features** | OHLCV + multi-pair cross-rates (currencies) |
+**Response**
+```json
+{
+  "analysis": {
+    "ai_model":   { "prediction": "NORM", "confidence": 0.94 },
+    "classic_ml": { "prediction": "NORM", "confidence": 0.88 }
+  },
+  "signals": { "lead_I": [...], "lead_II": [...] },
+  "time": [0, 1, 2, ...]
+}
+```
 
 ---
 
-## 📁 File Format Guide
+### 🧠 EEG
 
-### ECG — CSV
-```
-Columns: lead_I, lead_II, lead_III, ...   (one row per sample)
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/eeg/process` | `file: .npy or .csv` | CNN + SVM ensemble prediction |
+
+**Response**
+```json
+{
+  "analysis": {
+    "cnn": {
+      "prediction": "Depression", "confidence": 0.87,
+      "probabilities": { "ADFSU": 0.04, "Depression": 0.87, "REEG-PD": 0.06, "BrainLat": 0.03 },
+      "window_agreement": 0.91, "n_windows": 127
+    },
+    "svm": {
+      "prediction": "Depression", "confidence": 0.79,
+      "probabilities": { "ADFSU": 0.07, "Depression": 0.79, "REEG-PD": 0.09, "BrainLat": 0.05 }
+    },
+    "verdict": { "agree": true, "prediction": "Depression", "confidence": 0.87, "tiebreak": null }
+  },
+  "signals": { "EEG_CH1": [...], "EEG_CH19": [...] },
+  "time": [0, 1, 2, ...]
+}
 ```
 
-### ECG — WFDB
-```
-Upload: .hea (header) + .dat (binary signal) + .xyz (Frank leads, optional)
+---
+
+### 🔊 Acoustic
+
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/acoustic/simulate` | `{ frequency, velocity }` JSON | Generate Doppler waveform |
+| `GET`  | `/api/acoustic/doppler/datasets` | — | List pre-loaded recordings |
+| `GET`  | `/api/acoustic/doppler/analyze/{filename}` | — | Analyze a dataset recording |
+| `POST` | `/api/acoustic/doppler/upload` | `file: .wav/.mp3` | Upload audio → velocity analysis |
+| `POST` | `/api/acoustic/drone/upload` | `file: audio` | Upload audio → drone classification |
+
+**Doppler upload response**
+```json
+{
+  "waveform":    { "time": [...], "amplitude": [...] },
+  "fft":         { "frequencies": [...], "magnitudes": [...] },
+  "spectrogram": { "times": [...], "frequencies": [...], "power": [[...]] },
+  "doppler": {
+    "estimated_velocity_kmh": 67.4, "estimated_frequency_hz": 440,
+    "approach_freq_hz": 512, "recede_freq_hz": 388,
+    "freq_time_axis": [...], "freq_over_time": [...],
+    "algorithm": "STFT Peak Tracking"
+  },
+  "statistics": { "duration_s": 8.2, "sample_rate": 22050, "rms": 0.142, "snr_db": 18.3, "peak_to_peak": 1.94 }
+}
 ```
 
-### EEG — NumPy
-```
-Shape: (T, 19)   — T timesteps, 19 channels
-       (19, T)   — auto-transposed
-       (N, T, 19) — N segments, auto-flattened to (N*T, 19)
+**Drone upload response**
+```json
+{
+  "filename": "audio.wav",
+  "classification": { "label": "Drone Detected", "confidence": 0.91, "score": 4.2, "reasons": ["High ZCR", "Dominant frequency in rotor band"] },
+  "waveform":  { "time": [...], "amplitude": [...] },
+  "fft":       { "frequencies": [...], "magnitudes": [...] },
+  "features":  { "spectral_centroid": 1842.3, "spectral_bandwidth": 920.1, "spectral_rolloff": 3200.5, "dominant_freq": 210.0, "zero_crossing_rate": 0.082 },
+  "statistics": { "duration_s": 4.1, "sample_rate": 44100, "rms": 0.211, "snr_db": 14.7 }
+}
 ```
 
-### Microbiome — CSV
+---
+
+### 📈 Finance
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/finance/history/{asset}` | Historical OHLCV data |
+| `GET` | `/api/finance/forecast/{asset}` | GRU price forecast + confidence interval |
+
+**Forecast response**
+```json
+{
+  "asset": "EUR-USD", "horizon": 3,
+  "forecast": [1.089, 1.091, 1.088],
+  "upper":    [1.094, 1.097, 1.093],
+  "lower":    [1.084, 1.085, 1.083],
+  "dates":    ["2024-06-10", "2024-06-11", "2024-06-12"]
+}
 ```
-Required columns : Participant ID, week_num (or week/time/visit)
-Optional columns : fecalcal, External ID
-Remaining columns: microbiome species abundance values
+
+---
+
+### 🧬 Microbiome
+
+| Method | Endpoint | Body | Description |
+|---|---|---|---|
+| `POST` | `/api/bio/analyze` | `file: .csv` | Patient CSV → per-patient IBD predictions |
+
+**Response**
+```json
+{
+  "patients": [
+    {
+      "participant_id": "PATIENT_001", "num_weeks": 20,
+      "diagnosis": "Healthy", "confidence": 92.4,
+      "probabilities": { "Healthy": 0.924, "Crohn's Disease": 0.051, "Ulcerative Colitis": 0.025 },
+      "top_taxa": [{ "name": "Faecalibacterium prausnitzii", "mean_abundance": 44.2 }],
+      "weekly_data": { "weeks": [0, 2, 4], "taxa": ["Faecalibacterium prausnitzii"], "values": [[44.2, 43.1]] },
+      "fecalcal": [50.0, 50.0]
+    }
+  ]
+}
 ```
 
 ---
@@ -399,82 +391,456 @@ Remaining columns: microbiome species abundance values
 
 ```
 SignalViewer/
+│
 ├── Backend/
-│   ├── app.py                    # FastAPI entry point
-│   ├── requirements.txt
+│   ├── app.py                         # FastAPI entry point, route registration, CORS config
+│   ├── requirements.txt               # All Python dependencies
+│   │
 │   ├── routes/
-│   │   ├── medical_routes.py
-│   │   ├── eeg_routes.py
-│   │   ├── acoustic_routes.py
-│   │   ├── finance_routes.py
-│   │   └── bio_routes.py
+│   │   ├── medical_routes.py          # POST /api/medical/process, /process-wfdb
+│   │   ├── eeg_routes.py              # POST /api/eeg/process
+│   │   ├── acoustic_routes.py         # POST/GET /api/acoustic/*
+│   │   ├── finance_routes.py          # GET /api/finance/history, /forecast
+│   │   └── bio_routes.py              # POST /api/bio/analyze
+│   │
 │   ├── services/
-│   │   ├── medical_service.py
-│   │   ├── eeg_service.py
-│   │   ├── acoustic_service.py
-│   │   ├── finance_service.py
-│   │   └── bio_service.py
-│   ├── models/                   # ← Place .keras / .pkl / .csv here
-│   ├── uploads/                  # Temp storage for uploaded files
-│   └── data/                     # Static datasets
+│   │   ├── medical_service.py         # ECG parsing, CNN + RandomForest inference
+│   │   ├── eeg_service.py             # EEG sliding window, CNN + SVM ensemble, auto shape-detect
+│   │   ├── acoustic_service.py        # Doppler STFT estimation, drone spectral features
+│   │   ├── finance_service.py         # OHLCV loading, GRU forecasting per asset class
+│   │   └── bio_service.py             # Patient sequencing, IBD GRU inference, scaler auto-fit
+│   │
+│   ├── models/                        # ← All .keras / .pkl / .npy / .csv files here
+│   │   ├── ecg_model.keras
+│   │   ├── ecg_rf_model.pkl
+│   │   ├── eeg_model_final.keras
+│   │   ├── eeg_svm_model.pkl
+│   │   ├── train_mean.npy             # optional
+│   │   ├── train_std.npy              # optional
+│   │   ├── ibd_signal_detector.keras
+│   │   ├── hmp2_reference.csv
+│   │   ├── finance_stock_model.keras
+│   │   ├── finance_currency_model.keras
+│   │   └── finance_metal_model.keras
+│   │
+│   ├── uploads/                       # Temp storage — each file deleted after its request
+│   ├── data/                          # Static datasets (Doppler recordings, etc.)
+│   ├── test_sim.py                    # Standalone pipeline test (no HTTP server needed)
+│   └── plot_sim.py                    # Standalone signal plot test
 │
 ├── Frontend/
 │   └── app/
 │       ├── src/
 │       │   ├── pages/
-│       │   │   ├── Landing.jsx
-│       │   │   ├── Medical.jsx
-│       │   │   ├── Acoustic.jsx
-│       │   │   ├── Finance.jsx
-│       │   │   └── Microbiome.jsx
+│       │   │   ├── Landing.jsx        # Module selector — 5 domain cards
+│       │   │   ├── Medical.jsx        # ECG + EEG viewer (4 modes, playback, AI results)
+│       │   │   ├── Acoustic.jsx       # Doppler simulator + analysis + drone detection
+│       │   │   ├── Finance.jsx        # Candlestick + SMA + volume + GRU forecast
+│       │   │   └── Microbiome.jsx     # IBD patient CSV analysis, per-patient cards
+│       │   │
 │       │   └── components/
-│       │       ├── Sidebar.jsx
+│       │       ├── Sidebar.jsx        # Shared collapsible left sidebar wrapper
 │       │       └── ui/
-│       │           ├── ToggleTabs.jsx
-│       │           ├── SliderControl.jsx
-│       │           ├── FileUpload.jsx
-│       │           ├── StatCard.jsx
-│       │           ├── ChannelControl.jsx
-│       │           └── ColormapSelector.jsx
+│       │           ├── ToggleTabs.jsx         # Horizontal tab switcher
+│       │           ├── SliderControl.jsx      # Labeled range slider with live value
+│       │           ├── FileUpload.jsx         # Drag-and-drop + click file input
+│       │           ├── StatCard.jsx           # Titled result card container
+│       │           ├── ChannelControl.jsx     # Per-channel visibility / color / thickness
+│       │           └── ColormapSelector.jsx   # Plotly colormap dropdown
+│       │
 │       ├── package.json
-│       └── vite.config.js
+│       ├── vite.config.js
+│       └── tailwind.config.js
 │
 └── docs/
-    └── images/                   # ← Place all screenshots here
+    └── images/                        # ← Place all screenshots here
         ├── landing.png
-        ├── medical_ecg_multipanel.png
-        ├── medical_ecg_modes.png
-        ├── medical_eeg_results.png
+        ├── medical_landing.png
+        ├── ecg_continuous_multipanel.png
+        ├── ecg_xor.png
+        ├── ecg_polar.png
+        ├── ecg_trajectory.png
+        ├── ecg_ai_results.png
+        ├── eeg_tab_selector.png
+        ├── eeg_results_cards.png
+        ├── eeg_waveform.png
+        ├── acoustic_landing.png
         ├── acoustic_simulator.png
         ├── acoustic_analysis.png
         ├── acoustic_drone.png
+        ├── finance_overview.png
         ├── finance_candlestick.png
         ├── finance_forecast.png
+        ├── microbiome_upload.png
         ├── microbiome_results.png
-        └── microbiome_patient_card.png
+        ├── microbiome_patient_card.png
+        ├── microbiome_timeline.png
+        ├── microbiome_probs.png
+        └── microbiome_summary.png
 ```
 
 ---
 
-## 🧪 Development & Testing
+## 📘 Module Documentation
 
-```bash
-# Test signal generation pipeline (no HTTP server needed)
-python Backend/test_sim.py
-python Backend/plot_sim.py
+---
 
-# API documentation (interactive)
-http://localhost:8000/docs
+# 🫀 Medical Signal Viewer — ECG Analysis
+
+> **Module:** `Medical.jsx` · `medical_routes.py` · `medical_service.py`
+
+---
+
+## Overview
+
+Supports ECG upload and visualization with four interactive modes, animated playback, and dual-model AI classification.
+
+<!-- FIGURE: Medical Module Landing -->
+<!-- ![Medical Landing](docs/images/medical_landing.png) -->
+> 📸 *Screenshot of the Medical module with signal type selector (ECG / EEG): `docs/images/medical_landing.png`*
+
+---
+
+## Supported File Formats
+
+| Format | Description | Notes |
+|---|---|---|
+| `.csv` | Comma-separated, one row per sample | Columns = leads |
+| `.hea + .dat` | WFDB binary format | Upload both; header parsed for gain/baseline |
+| `.xyz` | Frank XYZ lead system | Used for ML model input, not visualized |
+
+---
+
+## Visualization Modes
+
+### 1. Continuous
+
+Real-time scrollable multi-channel waveform display.
+
+<!-- FIGURE: ECG Continuous Multi-Panel View -->
+<!-- ![ECG Continuous](docs/images/ecg_continuous_multipanel.png) -->
+> 📸 *Screenshot of ECG multi-panel continuous view: `docs/images/ecg_continuous_multipanel.png`*
+
+- **Multi-Panel** — each lead in its own panel
+- **Overlay** — all leads superimposed on one chart
+- Animated playback: speed 0.25× – 4×
+- Zoom: adjustable window 100 – 5000 samples
+- Per-channel: toggle visibility, color, line thickness
+
+### 2. XOR Analysis
+
+Bitwise XOR comparison between any two selected leads.
+
+<!-- FIGURE: ECG XOR Mode -->
+<!-- ![ECG XOR](docs/images/ecg_xor.png) -->
+> 📸 *Screenshot of ECG XOR mode with energy bars: `docs/images/ecg_xor.png`*
+
+- Binarizes both signals (threshold 0.5 after normalization)
+- XOR per sample highlights timing disagreements
+- XOR energy per chunk (16–256 samples) as bar chart
+
+### 3. Polar Periodicity
+
+Ratio `|Channel A| / |Channel B|` as a polar plot.
+
+<!-- FIGURE: ECG Polar Mode -->
+<!-- ![ECG Polar](docs/images/ecg_polar.png) -->
+> 📸 *Screenshot of ECG polar periodicity plot: `docs/images/ecg_polar.png`*
+
+- Theta wraps every N samples (configurable)
+- Radius normalized to 95th percentile
+- Live stats: mean r, std r, p95, revolution count
+
+### 4. Trajectory (Phase Space)
+
+Phase-space trajectory of Channel A vs Channel B.
+
+<!-- FIGURE: ECG Trajectory Mode -->
+<!-- ![ECG Trajectory](docs/images/ecg_trajectory.png) -->
+> 📸 *Screenshot of ECG trajectory plot: `docs/images/ecg_trajectory.png`*
+
+- Color-encoded by time index (selectable colormap)
+- Start (green) and end (red) markers
+- Stats: path length, cross-correlation, mean ± std
+
+---
+
+## AI Classification
+
+| Model | Type | Classes |
+|---|---|---|
+| AI Model | CNN (Deep Learning) | NORM, MI, STTC, CD, HYP |
+| Classic ML | Random Forest | NORM, MI, STTC, CD, HYP |
+
+<!-- FIGURE: ECG AI Results Panel -->
+<!-- ![ECG AI Results](docs/images/ecg_ai_results.png) -->
+> 📸 *Screenshot of AI + Classic ML result cards in sidebar: `docs/images/ecg_ai_results.png`*
+
+---
+
+## Screenshot Index — ECG
+
+| File | What to Capture |
+|---|---|
+| `docs/images/medical_landing.png` | Module with ECG/EEG selector |
+| `docs/images/ecg_continuous_multipanel.png` | Multi-panel continuous view |
+| `docs/images/ecg_xor.png` | XOR mode with energy bars |
+| `docs/images/ecg_polar.png` | Polar periodicity plot |
+| `docs/images/ecg_trajectory.png` | Phase-space trajectory |
+| `docs/images/ecg_ai_results.png` | AI + Classic ML result cards |
+
+---
+---
+
+# 🧠 EEG Signal Viewer — Neurological Classification
+
+> **Module:** `Medical.jsx` (EEG tab) · `eeg_routes.py` · `eeg_service.py`
+
+---
+
+## Overview
+
+19-channel EEG analysis through a sliding-window CNN + SVM ensemble pipeline for 4-class neurological classification.
+
+<!-- FIGURE: EEG Tab Selector -->
+<!-- ![EEG Tab](docs/images/eeg_tab_selector.png) -->
+> 📸 *Screenshot of the Medical module with EEG signal type selected: `docs/images/eeg_tab_selector.png`*
+
+---
+
+## Supported File Formats
+
+| Format | Shape | Notes |
+|---|---|---|
+| `.npy` | `(T, 19)` | Used directly |
+| `.npy` | `(19, T)` | Auto-transposed |
+| `.npy` | `(N, T, 19)` | Flattened to `(N×T, 19)` |
+| `.csv` | `(T, 19)` | Rows = samples, columns = channels |
+
+---
+
+## Processing Pipeline
+
+```
+Upload (.npy / .csv)
+    │
+    ▼
+Reshape → (T, 19)
+    │
+    ▼
+Sliding Window — 992 samples, 50% overlap (step = 496)
+    │
+    ▼
+Normalize — per-channel global z-score
+    │
+    ├──► CNN  →  expand_dims (N,992,19,1)  →  predict  →  soft-vote
+    └──► SVM  →  extract features (mean, std, min, max per channel)
+                 →  76 features  →  predict_proba  →  soft-vote
+    │
+    ▼
+Verdict — higher-confidence model wins on disagreement
 ```
 
 ---
 
-## 📄 License & Attribution
+## Classification Classes
 
-*(Include organizational licensing details or proprietary notices here)*
+| Index | Class | Condition |
+|---|---|---|
+| 0 | ADFSU | Attention Deficit / related spectrum |
+| 1 | Depression | Major depressive disorder |
+| 2 | REEG-PD | Parkinson's Disease resting EEG |
+| 3 | BrainLat | BrainLat dataset condition |
 
 ---
 
-<div align="center">
-Built with ⚡ FastAPI · React · TensorFlow · Plotly.js
-</div>
+## Model Details
+
+| Property | CNN | SVM |
+|---|---|---|
+| **File** | `eeg_model_final.keras` | `eeg_svm_model.pkl` |
+| **Input** | `(N, 992, 19, 1)` | `(N, 76)` — auto-detected from `n_features_in_` |
+| **Architecture** | Conv2D → MaxPool → Flatten → Dense | StandardScaler → SVC (Pipeline) |
+| **Voting** | Soft-vote mean across windows | `predict_proba` soft-vote |
+
+<!-- FIGURE: EEG CNN + SVM Result Cards -->
+<!-- ![EEG Results](docs/images/eeg_results_cards.png) -->
+> 📸 *Screenshot of EEG CNN Report + SVM Report sidebar cards: `docs/images/eeg_results_cards.png`*
+
+<!-- FIGURE: EEG Multi-Channel Waveform -->
+<!-- ![EEG Waveform](docs/images/eeg_waveform.png) -->
+> 📸 *Screenshot of the 19-channel EEG waveform in the main panel: `docs/images/eeg_waveform.png`*
+
+---
+
+## Required Model Files
+
+```
+Backend/models/
+├── eeg_model_final.keras     # required
+├── eeg_svm_model.pkl         # required
+├── train_mean.npy            # optional — training normalization mean
+└── train_std.npy             # optional — training normalization std
+```
+
+> If normalization files are absent, per-channel global z-score is computed from the uploaded file automatically.
+
+---
+
+## Screenshot Index — EEG
+
+| File | What to Capture |
+|---|---|
+| `docs/images/eeg_tab_selector.png` | Medical module with EEG selected |
+| `docs/images/eeg_results_cards.png` | CNN + SVM result cards in sidebar |
+| `docs/images/eeg_waveform.png` | 19-channel waveform in main panel |
+
+---
+---
+
+# 🔊 Acoustic Signal Viewer — Doppler & Drone Detection
+
+> **Module:** `Acoustic.jsx` · `acoustic_routes.py` · `acoustic_service.py`
+
+---
+
+## Overview
+
+Three-tab audio analysis suite: Doppler simulation, real-recording vehicle speed estimation, and drone sound classification.
+
+<!-- FIGURE: Acoustic Module Tab Overview -->
+<!-- ![Acoustic Landing](docs/images/acoustic_landing.png) -->
+> 📸 *Screenshot of the Acoustic module showing all three tabs: `docs/images/acoustic_landing.png`*
+
+---
+
+## Tab 1 — Doppler Simulator
+
+Generates synthetic Doppler-shifted audio from parameters and plays it back in the browser.
+
+<!-- FIGURE: Doppler Simulator -->
+<!-- ![Doppler Simulator](docs/images/acoustic_simulator.png) -->
+> 📸 *Screenshot: waveform + frequency chart + audio player: `docs/images/acoustic_simulator.png`*
+
+| Control | Range | Default |
+|---|---|---|
+| Horn Frequency | 100 – 2000 Hz | 440 Hz |
+| Vehicle Speed | 10 – 200 km/h | 80 km/h |
+
+**Charts:** Waveform · Observed Frequency Over Time (with dashed source frequency line) · In-browser WAV audio player
+
+---
+
+## Tab 2 — Doppler Analysis
+
+Analyzes real recordings to estimate vehicle speed from spectral Doppler shift.
+
+<!-- FIGURE: Doppler Analysis -->
+<!-- ![Doppler Analysis](docs/images/acoustic_analysis.png) -->
+> 📸 *Screenshot: waveform + FFT + Doppler curve + spectrogram: `docs/images/acoustic_analysis.png`*
+
+**Input:** Pre-loaded dataset dropdown or custom `.wav`/`.mp3` upload
+
+**Charts:** Waveform · FFT Spectrum (0–3000 Hz) · Doppler Curve with approach/recede reference lines · Spectrogram heatmap
+
+**Results card:** Estimated speed (km/h), approach/recede frequencies, actual speed (if labeled in dataset), error %, algorithm name
+
+---
+
+## Tab 3 — Drone Detection
+
+Classifies audio as drone or non-drone using spectral feature analysis.
+
+<!-- FIGURE: Drone Detection -->
+<!-- ![Drone Detection](docs/images/acoustic_drone.png) -->
+> 📸 *Screenshot: drone results with waveform + FFT + spectral features: `docs/images/acoustic_drone.png`*
+
+**Formats:** `.wav`, `.mp3`, `.ogg`, `.flac`
+
+**Charts:** Waveform · FFT (0–5000 Hz) · Spectral Features bar chart
+
+| Badge | Threshold |
+|---|---|
+| Drone Detected | confidence ≥ 60% |
+| Possible Drone | confidence 40–60% |
+| No Drone | confidence < 40% |
+
+---
+
+## Screenshot Index — Acoustic
+
+| File | What to Capture |
+|---|---|
+| `docs/images/acoustic_landing.png` | Module with all 3 tabs |
+| `docs/images/acoustic_simulator.png` | Simulator: waveform + frequency + audio player |
+| `docs/images/acoustic_analysis.png` | Analysis: 4 charts + results card |
+| `docs/images/acoustic_drone.png` | Drone: results + spectral features chart |
+
+---
+---
+
+# 📈 Finance Signal Viewer — Market Analysis & Forecasting
+
+> **Module:** `Finance.jsx` · `finance_routes.py` · `finance_service.py`
+
+---
+
+## Overview
+
+Candlestick charting, SMA technical indicators, volume bars, and GRU-based price forecasting across stocks, currencies, and metals.
+
+<!-- FIGURE: Finance Overview -->
+<!-- ![Finance Overview](docs/images/finance_overview.png) -->
+> 📸 *Screenshot of Finance module with candlestick chart and asset selector: `docs/images/finance_overview.png`*
+
+---
+
+## Asset Registry
+
+| Category | Assets | Forecast Horizon |
+|---|---|---|
+| 📈 Stocks | ABTX, AAT | 5 days |
+| 💱 Currencies | EUR/USD, USD/JPY | 3 days |
+| 🪙 Metals | Gold, Silver | 30 days |
+
+---
+
+## Charts
+
+**Candlestick** — OHLC candles with SMA-20 (blue dashed) and SMA-50 (amber dashed) overlays
+
+<!-- FIGURE: Finance Candlestick -->
+<!-- ![Finance Candlestick](docs/images/finance_candlestick.png) -->
+> 📸 *Screenshot of candlestick chart with SMA overlays: `docs/images/finance_candlestick.png`*
+
+**Volume** — Bar chart below candlestick, color-matched to candle direction
+
+**GRU Forecast** — Historical close line + forecast dashed line + shaded confidence band
+
+<!-- FIGURE: Finance Forecast -->
+<!-- ![Finance Forecast](docs/images/finance_forecast.png) -->
+> 📸 *Screenshot of GRU forecast with confidence band: `docs/images/finance_forecast.png`*
+
+---
+
+## Required Model Files
+
+```
+Backend/models/
+├── finance_stock_model.keras
+├── finance_currency_model.keras
+└── finance_metal_model.keras
+```
+
+---
+
+## Screenshot Index — Finance
+
+| File | What to Capture |
+|---|---|
+| `docs/images/finance_overview.png` | Asset selector + candlestick chart |
+| `docs/images/finance_candlestick.png` | Candlestick + SMA-20 + SMA-50 |
+| `docs/images/finance_forecast.png` | GRU forecast + confidence band |
+
+---
+---
