@@ -14,7 +14,8 @@
 
 <!-- FIGURE: Landing Page -->
 <!-- ![Landing Page](docs/images/landing.png) -->
-> 📸 *Screenshot of the SignalViewer landing page showing all module cards: `docs/images/landing.png`*
+> 📸 *Screenshot of the SignalViewer landing page showing all module cards:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 162624" src="https://github.com/user-attachments/assets/cbf524a5-16d3-4bd1-826c-2b3b606f518e" />
 
 </div>
 
@@ -263,7 +264,8 @@ Supports ECG upload and visualization with four interactive modes, animated play
 
 <!-- FIGURE: Medical Module Landing -->
 <!-- ![Medical Landing](docs/images/medical_landing.png) -->
-> 📸 *Screenshot of the Medical module with signal type selector (ECG / EEG): `docs/images/medical_landing.png`*
+> 📸 *Screenshot of the Medical module with signal type selector (ECG / EEG):*
+<img width="960" height="540" alt="Screenshot 2026-02-22 162809" src="https://github.com/user-attachments/assets/e67b84c3-cf3e-4d38-97ad-52494713c43a" />
 
 ---
 
@@ -285,7 +287,8 @@ Real-time scrollable multi-channel waveform display.
 
 <!-- FIGURE: ECG Continuous Multi-Panel View -->
 <!-- ![ECG Continuous](docs/images/ecg_continuous_multipanel.png) -->
-> 📸 *Screenshot of ECG multi-panel continuous view: `docs/images/ecg_continuous_multipanel.png`*
+> 📸 *Screenshot of ECG multi-panel continuous view:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 162918" src="https://github.com/user-attachments/assets/63bdb2c3-6ab2-4029-8e3e-b39037260a67" />
 
 - **Multi-Panel** — each lead in its own panel
 - **Overlay** — all leads superimposed on one chart
@@ -299,7 +302,8 @@ Bitwise XOR comparison between any two selected leads.
 
 <!-- FIGURE: ECG XOR Mode -->
 <!-- ![ECG XOR](docs/images/ecg_xor.png) -->
-> 📸 *Screenshot of ECG XOR mode with energy bars: `docs/images/ecg_xor.png`*
+> 📸 *Screenshot of ECG XOR mode with energy bars:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 163019" src="https://github.com/user-attachments/assets/1ca290ab-3ff4-4988-98d1-38b1841d2e82" />
 
 - Binarizes both signals (threshold 0.5 after normalization)
 - XOR per sample highlights timing disagreements
@@ -311,7 +315,8 @@ Ratio `|Channel A| / |Channel B|` as a polar plot.
 
 <!-- FIGURE: ECG Polar Mode -->
 <!-- ![ECG Polar](docs/images/ecg_polar.png) -->
-> 📸 *Screenshot of ECG polar periodicity plot: `docs/images/ecg_polar.png`*
+> 📸 *Screenshot of ECG polar periodicity plot:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 163131" src="https://github.com/user-attachments/assets/e11c7495-a855-433d-9d4f-51d638e60640" />
 
 - Theta wraps every N samples (configurable)
 - Radius normalized to 95th percentile
@@ -323,7 +328,8 @@ Phase-space trajectory of Channel A vs Channel B.
 
 <!-- FIGURE: ECG Trajectory Mode -->
 <!-- ![ECG Trajectory](docs/images/ecg_trajectory.png) -->
-> 📸 *Screenshot of ECG trajectory plot: `docs/images/ecg_trajectory.png`*
+> 📸 *Screenshot of ECG trajectory plot:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 163204" src="https://github.com/user-attachments/assets/6e4fabde-c1ea-4d0c-81ff-4267a0e42401" />
 
 - Color-encoded by time index (selectable colormap)
 - Start (green) and end (red) markers
@@ -338,10 +344,6 @@ Phase-space trajectory of Channel A vs Channel B.
 | AI Model | CNN (Deep Learning) | NORM, MI, STTC, CD, HYP |
 | Classic ML | Random Forest | NORM, MI, STTC, CD, HYP |
 
-<!-- FIGURE: ECG AI Results Panel -->
-<!-- ![ECG AI Results](docs/images/ecg_ai_results.png) -->
-> 📸 *Screenshot of AI + Classic ML result cards in sidebar: `docs/images/ecg_ai_results.png`*
-
 ---
 
 # 🧠 EEG Signal Viewer — Neurological Classification
@@ -353,10 +355,6 @@ Phase-space trajectory of Channel A vs Channel B.
 ## Overview
 
 19-channel EEG analysis through a sliding-window CNN + SVM ensemble pipeline for 4-class neurological classification.
-
-<!-- FIGURE: EEG Tab Selector -->
-<!-- ![EEG Tab](docs/images/eeg_tab_selector.png) -->
-> 📸 *Screenshot of the Medical module with EEG signal type selected: `docs/images/eeg_tab_selector.png`*
 
 ---
 
@@ -415,13 +413,8 @@ Verdict — higher-confidence model wins on disagreement
 | **Architecture** | Conv2D → MaxPool → Flatten → Dense | StandardScaler → SVC (Pipeline) |
 | **Voting** | Soft-vote mean across windows | `predict_proba` soft-vote |
 
-<!-- FIGURE: EEG CNN + SVM Result Cards -->
-<!-- ![EEG Results](docs/images/eeg_results_cards.png) -->
-> 📸 *Screenshot of EEG CNN Report + SVM Report sidebar cards: `docs/images/eeg_results_cards.png`*
-
-<!-- FIGURE: EEG Multi-Channel Waveform -->
-<!-- ![EEG Waveform](docs/images/eeg_waveform.png) -->
-> 📸 *Screenshot of the 19-channel EEG waveform in the main panel: `docs/images/eeg_waveform.png`*
+> 📸 *Screenshot of the 19-channel EEG waveform in the main panel:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 163355" src="https://github.com/user-attachments/assets/1acb9cfb-39ff-4572-a9f4-7b024c124b99" />
 
 ---
 
@@ -449,10 +442,6 @@ Backend/models/
 
 Three-tab audio analysis suite: Doppler simulation, real-recording vehicle speed estimation, and drone sound classification.
 
-<!-- FIGURE: Acoustic Module Tab Overview -->
-<!-- ![Acoustic Landing](docs/images/acoustic_landing.png) -->
-> 📸 *Screenshot of the Acoustic module showing all three tabs: `docs/images/acoustic_landing.png`*
-
 ---
 
 ## Tab 1 — Doppler Simulator
@@ -461,7 +450,9 @@ Generates synthetic Doppler-shifted audio from parameters and plays it back in t
 
 <!-- FIGURE: Doppler Simulator -->
 <!-- ![Doppler Simulator](docs/images/acoustic_simulator.png) -->
-> 📸 *Screenshot: waveform + frequency chart + audio player: `docs/images/acoustic_simulator.png`*
+> 📸 *Screenshot: waveform + frequency chart + audio player:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 163419" src="https://github.com/user-attachments/assets/d3e75e91-1c9a-488d-8ccd-cbb2c9c9b6fc" />
+
 
 | Control | Range | Default |
 |---|---|---|
@@ -478,7 +469,9 @@ Analyzes real recordings to estimate vehicle speed from spectral Doppler shift.
 
 <!-- FIGURE: Doppler Analysis -->
 <!-- ![Doppler Analysis](docs/images/acoustic_analysis.png) -->
-> 📸 *Screenshot: waveform + FFT + Doppler curve + spectrogram: `docs/images/acoustic_analysis.png`*
+> 📸 *Screenshot: waveform + FFT + Doppler curve + spectrogram:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 163455" src="https://github.com/user-attachments/assets/a4e0568e-5899-4844-a15a-4aeabcb6f4bd" />
+
 
 **Input:** Pre-loaded dataset dropdown or custom `.wav`/`.mp3` upload
 
@@ -494,7 +487,8 @@ Classifies audio as drone or non-drone using spectral feature analysis.
 
 <!-- FIGURE: Drone Detection -->
 <!-- ![Drone Detection](docs/images/acoustic_drone.png) -->
-> 📸 *Screenshot: drone results with waveform + FFT + spectral features: `docs/images/acoustic_drone.png`*
+> 📸 *Screenshot: drone results with waveform + FFT + spectral features:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 163527" src="https://github.com/user-attachments/assets/bec9d99c-f75c-4bb9-a48c-e9a1e127635f" />
 
 **Formats:** `.wav`, `.mp3`, `.ogg`, `.flac`
 
@@ -518,10 +512,6 @@ Classifies audio as drone or non-drone using spectral feature analysis.
 
 Candlestick charting, SMA technical indicators, volume bars, and GRU-based price forecasting across stocks, currencies, and metals.
 
-<!-- FIGURE: Finance Overview -->
-<!-- ![Finance Overview](docs/images/finance_overview.png) -->
-> 📸 *Screenshot of Finance module with candlestick chart and asset selector: `docs/images/finance_overview.png`*
-
 ---
 
 ## Asset Registry
@@ -540,7 +530,8 @@ Candlestick charting, SMA technical indicators, volume bars, and GRU-based price
 
 <!-- FIGURE: Finance Candlestick -->
 <!-- ![Finance Candlestick](docs/images/finance_candlestick.png) -->
-> 📸 *Screenshot of candlestick chart with SMA overlays: `docs/images/finance_candlestick.png`*
+> 📸 *Screenshot of candlestick chart with SMA overlays:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 164105" src="https://github.com/user-attachments/assets/cd89bbd8-85ba-47ad-9c4f-38d3622582f8" />
 
 **Volume** — Bar chart below candlestick, color-matched to candle direction
 
@@ -548,7 +539,8 @@ Candlestick charting, SMA technical indicators, volume bars, and GRU-based price
 
 <!-- FIGURE: Finance Forecast -->
 <!-- ![Finance Forecast](docs/images/finance_forecast.png) -->
-> 📸 *Screenshot of GRU forecast with confidence band: `docs/images/finance_forecast.png`*
+> 📸 *Screenshot of GRU forecast with confidence band:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 164137" src="https://github.com/user-attachments/assets/44e6d426-ffc8-47e9-b4eb-e4478aeae8d4" />
 
 ---
 
@@ -572,11 +564,6 @@ Backend/models/
 ## Overview
 
 Longitudinal gut microbiome CSV analysis with per-patient IBD classification using a Bidirectional GRU trained on the HMP2 dataset.
-
-<!-- FIGURE: Microbiome Upload State -->
-<!-- ![Microbiome Upload](docs/images/microbiome_upload.png) -->
-> 📸 *Screenshot of the Microbiome module before upload: `docs/images/microbiome_upload.png`*
-
 ---
 
 ## Input File Format
@@ -635,23 +622,17 @@ Weekly timeline data
 
 ## Per-Patient Output Card
 
-<!-- FIGURE: Microbiome Results -->
-<!-- ![Microbiome Results](docs/images/microbiome_results.png) -->
-> 📸 *Screenshot of patient result cards after upload: `docs/images/microbiome_results.png`*
-
 <!-- FIGURE: Microbiome Patient Card -->
 <!-- ![Microbiome Patient Card](docs/images/microbiome_patient_card.png) -->
-> 📸 *Close-up of a single patient card: `docs/images/microbiome_patient_card.png`*
+> 📸 *Close-up of a single patient card:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 164229" src="https://github.com/user-attachments/assets/55e0a25b-4316-4678-9178-40ddcc5a87b9" />
+
 
 Each card contains: diagnosis badge · confidence bar · taxa timeline chart · probability bar chart · top-5 taxa ranked by mean abundance with proportional bars
 
-<!-- FIGURE: Microbiome Timeline -->
-<!-- ![Microbiome Timeline](docs/images/microbiome_timeline.png) -->
-> 📸 *Taxa abundance timeline chart: `docs/images/microbiome_timeline.png`*
 
-<!-- FIGURE: Microbiome Probabilities -->
-<!-- ![Microbiome Probs](docs/images/microbiome_probs.png) -->
-> 📸 *Diagnosis probability bar chart: `docs/images/microbiome_probs.png`*
+> 📸 *Diagnosis probability bar chart:*
+<img width="960" height="540" alt="Screenshot 2026-02-22 164250" src="https://github.com/user-attachments/assets/9d02688e-1afa-4b1c-af1a-970601b060b5" />
 
 ---
 
