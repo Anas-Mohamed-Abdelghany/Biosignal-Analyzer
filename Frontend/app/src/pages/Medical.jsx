@@ -73,9 +73,6 @@ function binarize(arr) {
     return n.map(v => v >= 0.5 ? 1 : 0)
 }
 
-// ─── File format parsers ──────────────────────────────────────────────────────
-// Removed local WFDB/XYZ parsers. We now send raw files to Python backend.
-
 // Class label maps
 const ECG_CLASSES = ['NORM', 'MI', 'STTC', 'CD', 'HYP']
 const EEG_CLASSES = ['ADFSU', 'Depression', 'REEG-PD', 'BrainLat']
@@ -180,7 +177,7 @@ export default function Medical() {
         return () => clearInterval(playIntervalRef.current)
     }, [playing, speed, graphData, windowSize])
 
-    // --- FILE UPLOAD HANDLER (csv + xyz only; wfdb handled inline in sidebar) ---
+    // --- FILE UPLOAD HANDLER ---
     const handleFileUpload = async (file) => {
         if (!file) return
         setLoading(true)
@@ -198,7 +195,6 @@ export default function Medical() {
                 const res = await fetch('http://127.0.0.1:8000/api/eeg/process', { method: 'POST', body: formData })
                 const data = await res.json()
                 if (data.error) { alert(data.details || data.error); return }
-                // EEG response: { analysis: { cnn, svm }, signals, time }
                 setAiReport(data.analysis?.cnn ?? data.analysis?.ai_model ?? null)
                 setMlReport(data.analysis?.svm ?? data.analysis?.classic_ml ?? null)
                 const keys = Object.keys(data.signals || {})
@@ -242,48 +238,60 @@ export default function Medical() {
         setGraphData({ time, traces })
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
     // --- CONTINUOUS RENDER ---
+    // FIX: wrapped in requestAnimationFrame so DOM refs are guaranteed to exist
+    // after React re-renders the channel divs (channels state update → new divs
+    // → refs populated → next paint frame → Plotly.react safely called)
+    // ─────────────────────────────────────────────────────────────────────────
     useEffect(() => {
         if (!graphData || viewerMode !== 'Continuous') return
+
         const visibleChannels = channels.filter(c => c.visible && c.id < graphData.traces.length)
         const xIndices = Array.from(graphData.time.keys())
         let xRange = [0, windowSize]
         if (playing) xRange = [playIndexRef.current, playIndexRef.current + windowSize]
         else if (stoppedIndexRef.current !== undefined) xRange = [stoppedIndexRef.current, stoppedIndexRef.current + windowSize]
 
-        if (displayMode === 'Multi-Panel') {
-            visibleChannels.forEach((ch) => {
-                const el = continuousRefs.current[ch.id]
-                if (!el) return
-                Plotly.react(el, [{
+        // ✅ KEY FIX: defer by one animation frame so all channel <div> refs
+        // are mounted in the DOM before Plotly tries to render into them.
+        const raf = requestAnimationFrame(() => {
+            if (displayMode === 'Multi-Panel') {
+                visibleChannels.forEach((ch) => {
+                    const el = continuousRefs.current[ch.id]
+                    if (!el) return
+                    Plotly.react(el, [{
+                        x: xIndices, y: graphData.traces[ch.id],
+                        type: 'scatter', mode: 'lines',
+                        line: { color: ch.color, width: ch.thickness },
+                        name: ch.label,
+                    }], {
+                        ...DARK_LAYOUT, height: 160,
+                        title: { text: ch.label, font: { size: 11, color: '#94a3b8' }, x: 0.05 },
+                        margin: { t: 30, r: 20, b: 30, l: 50 },
+                        showlegend: false,
+                        xaxis: { ...DARK_LAYOUT.xaxis, range: xRange }
+                    }, { responsive: true, displayModeBar: false })
+                })
+            } else {
+                if (!overlayRef.current) return
+                const traces = visibleChannels.map(ch => ({
                     x: xIndices, y: graphData.traces[ch.id],
                     type: 'scatter', mode: 'lines',
                     line: { color: ch.color, width: ch.thickness },
                     name: ch.label,
-                }], {
-                    ...DARK_LAYOUT, height: 160,
-                    title: { text: ch.label, font: { size: 11, color: '#94a3b8' }, x: 0.05 },
-                    margin: { t: 30, r: 20, b: 30, l: 50 },
-                    showlegend: false,
+                }))
+                Plotly.react(overlayRef.current, traces, {
+                    ...DARK_LAYOUT, height: 550,
                     xaxis: { ...DARK_LAYOUT.xaxis, range: xRange }
-                }, { responsive: true, displayModeBar: false })
-            })
-        } else {
-            if (!overlayRef.current) return
-            const traces = visibleChannels.map(ch => ({
-                x: xIndices, y: graphData.traces[ch.id],
-                type: 'scatter', mode: 'lines',
-                line: { color: ch.color, width: ch.thickness },
-                name: ch.label,
-            }))
-            Plotly.react(overlayRef.current, traces, {
-                ...DARK_LAYOUT, height: 550,
-                xaxis: { ...DARK_LAYOUT.xaxis, range: xRange }
-            }, { responsive: true })
-        }
+                }, { responsive: true })
+            }
+        })
+
+        return () => cancelAnimationFrame(raf)
     }, [graphData, viewerMode, displayMode, channels, playing, windowSize])
 
-    // --- POLAR RENDER: r = |chA[i]| / (|chB[i]| + ε), theta = (i / periodicity) * 360 ---
+    // --- POLAR RENDER ---
     useEffect(() => {
         if (viewerMode !== 'Polar' || !polarRef.current) return
 
@@ -298,13 +306,11 @@ export default function Medical() {
             const chBLabel = channels[chB]?.label || `CH${chB + 1}`
             const colorA = channels[chA]?.color || '#4f8ef7'
 
-            // r = |A| / (|B| + ε), then normalize to 0–1 via 95th-percentile clip to avoid 350k spikes
             const rRaw = sigA.map((v, i) => Math.abs(v) / (Math.abs(sigB[i]) + 1e-6))
             const sorted = [...rRaw].sort((a, b) => a - b)
             const p95 = sorted[Math.floor(sorted.length * 0.95)] || 1
-            const r = rRaw.map(v => Math.min(v, p95) / p95)   // normalized 0..1
+            const r = rRaw.map(v => Math.min(v, p95) / p95)
 
-            // theta = sample index wraps every `periodicity` samples → one full 360° revolution
             const theta = sigA.map((_, i) => ((i % periodicity) / periodicity) * 360)
 
             Plotly.react(polarRef.current, [{
@@ -335,7 +341,6 @@ export default function Medical() {
                 },
             }, { responsive: true, displayModeBar: false })
         } else {
-            // Demo if no data
             const r = Array.from({ length: 400 }, (_, i) => 0.5 + 0.3 * Math.sin(i * 0.1))
             const theta = Array.from({ length: 400 }, (_, i) => (i / 400) * 360)
             Plotly.react(polarRef.current, [{
@@ -353,7 +358,7 @@ export default function Medical() {
         }
     }, [viewerMode, graphData, chA, chB, channels, periodicity, sampleCount, allSamples])
 
-    // --- XOR RENDER: chunk both signals, XOR each chunk, plot per-chunk XOR energy ---
+    // --- XOR RENDER ---
     useEffect(() => {
         if (viewerMode !== 'XOR' || !xorRef.current) return
 
@@ -363,7 +368,6 @@ export default function Medical() {
             const chALabel = channels[chA]?.label || `CH${chA + 1}`
             const chBLabel = channels[chB]?.label || `CH${chB + 1}`
 
-            // Split into chunks of `chunkSize`, binarize each chunk, XOR, compute energy per chunk
             const numChunks = Math.floor(rawA.length / chunkSize)
             const chunkIndices = Array.from({ length: numChunks }, (_, c) => c * chunkSize)
             const xorEnergy = chunkIndices.map((start) => {
@@ -374,7 +378,6 @@ export default function Medical() {
                 return binA.reduce((acc, v, i) => acc + (v ^ binB[i]), 0) / chunkSize
             })
 
-            // Also show full-resolution binarized signals for context
             const binA = binarize(rawA)
             const binB = binarize(rawB)
             const xored = binA.map((v, i) => v ^ binB[i])
@@ -401,7 +404,6 @@ export default function Medical() {
                     fill: 'tozeroy', fillcolor: 'rgba(245,158,11,0.08)',
                 },
                 {
-                    // XOR energy per chunk — bar chart on secondary y
                     x: chunkIndices, y: xorEnergy,
                     type: 'bar',
                     marker: { color: 'rgba(239,68,68,0.6)', line: { color: '#ef4444', width: 1 } },
@@ -429,7 +431,7 @@ export default function Medical() {
         }
     }, [viewerMode, graphData, chA, chB, channels, chunkSize])
 
-    // --- RECURRENCE / TRAJECTORY RENDER: chA[t] vs chB[t] line over time ---
+    // --- RECURRENCE / TRAJECTORY RENDER ---
     useEffect(() => {
         if (viewerMode !== 'Recurrence' || !recurrenceRef.current) return
 
@@ -443,20 +445,16 @@ export default function Medical() {
             const chALabel = channels[chA]?.label || `CH${chA + 1}`
             const chBLabel = channels[chB]?.label || `CH${chB + 1}`
 
-            // Color-encode time using a gradient via multiple segments would be slow;
-            // use a single scatter with marker color = time index for color-coded trajectory
             const timeIdx = Array.from({ length: n }, (_, i) => i)
 
             Plotly.react(recurrenceRef.current, [
                 {
-                    // Trajectory line (faint)
                     x: sigA, y: sigB,
                     type: 'scatter', mode: 'lines',
                     line: { color: 'rgba(79,142,247,0.25)', width: 1 },
                     showlegend: false,
                 },
                 {
-                    // Color-coded by time
                     x: sigA, y: sigB,
                     type: 'scatter', mode: 'markers',
                     marker: {
@@ -473,14 +471,12 @@ export default function Medical() {
                     name: 'Trajectory',
                 },
                 {
-                    // Start marker
                     x: [sigA[0]], y: [sigB[0]],
                     type: 'scatter', mode: 'markers',
                     marker: { color: '#22d3a5', size: 9, symbol: 'circle', line: { color: '#fff', width: 1.5 } },
                     name: 't=0 (start)',
                 },
                 {
-                    // End marker
                     x: [sigA[n - 1]], y: [sigB[n - 1]],
                     type: 'scatter', mode: 'markers',
                     marker: { color: '#ef4444', size: 9, symbol: 'square', line: { color: '#fff', width: 1.5 } },
@@ -498,7 +494,6 @@ export default function Medical() {
                 legend: { font: { color: '#94a3b8', size: 10 }, bgcolor: 'transparent' },
             }, { responsive: true, displayModeBar: false })
         } else {
-            // Demo Lissajous trajectory
             const t = Array.from({ length: 500 }, (_, i) => i / 500 * Math.PI * 6)
             const x = t.map(v => Math.sin(3 * v))
             const y = t.map(v => Math.sin(2 * v + Math.PI / 4))
@@ -557,7 +552,7 @@ export default function Medical() {
             <section>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Signal Input</h3>
 
-                {/* Format selector — ECG: CSV / WFDB+XYZ  |  EEG: CSV / NPY */}
+                {/* Format selector — ECG: CSV / WFDB  |  EEG: CSV / NPY */}
                 <div className="grid grid-cols-2 gap-1 mb-3">
                     {(signalType === 'eeg'
                         ? [{ id: 'csv', label: '.csv' }, { id: 'npy', label: '.npy' }]
@@ -593,7 +588,7 @@ export default function Medical() {
                     <>
                         <p className="text-xs text-gray-600 mb-2">
                             NumPy array — shape (T, 19) or (19, T) or (N, T, 19).<br />
-                            Sliding window (256 samp, step 128) applied automatically.
+                            Sliding window applied automatically.
                         </p>
                         <FileUpload accept=".npy" label="Drop .npy file" onFile={handleFileUpload} />
                     </>
@@ -610,9 +605,7 @@ export default function Medical() {
                             <FileUpload
                                 accept=".hea"
                                 label="Drop .hea"
-                                onFile={(file) => {
-                                    if (file) setHeaFileRef(file)
-                                }}
+                                onFile={(file) => { if (file) setHeaFileRef(file) }}
                             />
                         </div>
 
@@ -624,9 +617,7 @@ export default function Medical() {
                             <FileUpload
                                 accept=".dat"
                                 label="Drop .dat"
-                                onFile={(file) => {
-                                    if (file) setDatFileRef(file)
-                                }}
+                                onFile={(file) => { if (file) setDatFileRef(file) }}
                             />
                         </div>
 
@@ -638,9 +629,7 @@ export default function Medical() {
                             <FileUpload
                                 accept=".xyz,.dat"
                                 label="Drop .xyz"
-                                onFile={(file) => {
-                                    if (file) setXyzFileRef(file)
-                                }}
+                                onFile={(file) => { if (file) setXyzFileRef(file) }}
                             />
                         </div>
 
@@ -656,9 +645,7 @@ export default function Medical() {
                                         const form = new FormData()
                                         form.append('hea_file', heaFileRef, heaFileRef.name)
                                         form.append('dat_file', datFileRef, datFileRef.name)
-                                        if (xyzFileRef) {
-                                            form.append('xyz_file', xyzFileRef, xyzFileRef.name)
-                                        }
+                                        if (xyzFileRef) form.append('xyz_file', xyzFileRef, xyzFileRef.name)
                                         const res = await fetch('http://127.0.0.1:8000/api/medical/process-wfdb', {
                                             method: 'POST', body: form
                                         })
@@ -668,7 +655,6 @@ export default function Medical() {
                                         } else {
                                             setAiReport(data.analysis?.ai_model ?? null)
                                             setMlReport(data.analysis?.classic_ml ?? null)
-
                                             const keys = Object.keys(data.signals || {})
                                             if (keys.length) _applySignals(keys, keys.map(k => data.signals[k]), data.time)
                                         }
@@ -688,8 +674,6 @@ export default function Medical() {
                                     : '🔬 View & Analyze Signal'}
                             </button>
                         )}
-
-                        
                     </div>
                 )}
 
@@ -701,7 +685,7 @@ export default function Medical() {
                 <ToggleTabs tabs={['Continuous', 'XOR', 'Polar', 'Recurrence']} active={viewerMode} onChange={setViewerMode} />
             </section>
 
-            {/* ── CONTINUOUS: display toggle + leads ── */}
+            {/* ── CONTINUOUS: display toggle + channels/leads ── */}
             {!isAdvancedMode && (
                 <>
                     <section>
@@ -716,10 +700,18 @@ export default function Medical() {
                         </div>
                     </section>
 
+                    {/* ✅ FIX: "Leads" → dynamic label based on signal type */}
                     <section>
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Leads ({channels.length})</h3>
+                        <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                            {signalType === 'eeg' ? 'Channels' : 'Leads'} ({channels.length})
+                        </h3>
                         <div className="max-h-[280px] overflow-y-auto pr-2 custom-scrollbar border border-dark-border/30 rounded-lg p-2 bg-dark-bg/50">
-                            <ChannelControl channels={channels} onToggle={toggleChannel} onColorChange={changeColor} onThicknessChange={changeThickness} />
+                            <ChannelControl
+                                channels={channels}
+                                onToggle={toggleChannel}
+                                onColorChange={changeColor}
+                                onThicknessChange={changeThickness}
+                            />
                         </div>
                     </section>
                 </>
@@ -791,7 +783,6 @@ export default function Medical() {
             {(viewerMode === 'Polar' || viewerMode === 'Recurrence') && (
                 <section>
                     <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Sample Range</h3>
-                    {/* All-data toggle */}
                     <div className="flex items-center gap-2 mb-3">
                         <button
                             onClick={() => setAllSamples(v => !v)}
@@ -806,12 +797,10 @@ export default function Medical() {
                                 : ''}
                         </span>
                     </div>
-                    {/* Native range slider — fires onInput on every tick */}
                     {!allSamples && (() => {
                         const maxSamp = graphData
                             ? Math.min(graphData.traces[chA]?.length || 10000, graphData.traces[chB]?.length || 10000)
                             : 10000
-                        // Clamp displayed value so it never exceeds actual data
                         const clampedVal = Math.min(sampleCount, maxSamp)
                         const pct = ((clampedVal - 100) / (maxSamp - 100)) * 100
                         return (
@@ -846,7 +835,7 @@ export default function Medical() {
                 </div>
             )}
 
-            {/* ── AI/ML reports: Continuous only ── */}
+            {/* ── AI/ML reports ── */}
             {viewerMode === 'Continuous' && (
                 <>
                     <StatCard title={signalType === 'eeg' ? 'CNN Report' : 'AI Report'} className="mb-3">
@@ -947,10 +936,8 @@ export default function Medical() {
                 const stdB = Math.sqrt(sigB.reduce((s, v) => s + (v - meanB) ** 2, 0) / n)
                 let minA = sigA[0], maxA = sigA[0]; for (const v of sigA) { if (v < minA) minA = v; if (v > maxA) maxA = v }
                 let minB = sigB[0], maxB = sigB[0]; for (const v of sigB) { if (v < minB) minB = v; if (v > maxB) maxB = v }
-                // Path length (Euclidean sum of steps)
                 let pathLen = 0
                 for (let i = 1; i < n; i++) pathLen += Math.sqrt((sigA[i] - sigA[i - 1]) ** 2 + (sigB[i] - sigB[i - 1]) ** 2)
-                // Cross-correlation at lag 0
                 const cov = sigA.reduce((s, v, i) => s + (v - meanA) * (sigB[i] - meanB), 0) / n
                 const corr = stdA * stdB > 0 ? cov / (stdA * stdB) : 0
                 return (
