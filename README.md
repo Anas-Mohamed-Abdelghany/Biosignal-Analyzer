@@ -796,6 +796,7 @@ SignalViewer/
 │
 ├── Backend/
 │   ├── app.py                         # FastAPI entry point, route registration, CORS config
+│   ├── config.py
 │   ├── requirements.txt               # All Python dependencies
 │   │
 │   ├── routes/
@@ -825,34 +826,43 @@ SignalViewer/
 │   │   ├── finance_currency_model.keras
 │   │   └── finance_metal_model.keras
 │   │
+│   ├── core/
 │   ├── uploads/                       # Temp storage — each file deleted after its request
 │   ├── data/                          # Static datasets (Doppler recordings, etc.)
+│   ├── tests/
+│   ├── utils/
 │   ├── test_sim.py                    # Standalone pipeline test (no HTTP server needed)
 │   └── plot_sim.py                    # Standalone signal plot test
 │
 └── Frontend/
-   └── app/
-       ├── src/
-       │   ├── pages/
-       │   │   ├── Landing.jsx        # Module selector — 5 domain cards
-       │   │   ├── Medical.jsx        # ECG + EEG viewer (4 modes, playback, AI results)
-       │   │   ├── Acoustic.jsx       # Doppler simulator + analysis + drone detection
-       │   │   ├── Finance.jsx        # Candlestick + SMA + volume + GRU forecast
-       │   │   └── Microbiome.jsx     # IBD patient CSV analysis, per-patient cards
-       │   │
-       │   └── components/
-       │       ├── Sidebar.jsx        # Shared collapsible left sidebar wrapper
-       │       └── ui/
-       │           ├── ToggleTabs.jsx         # Horizontal tab switcher
-       │           ├── SliderControl.jsx      # Labeled range slider with live value
-       │           ├── FileUpload.jsx         # Drag-and-drop + click file input
-       │           ├── StatCard.jsx           # Titled result card container
-       │           ├── ChannelControl.jsx     # Per-channel visibility / color / thickness
-       │           └── ColormapSelector.jsx   # Plotly colormap dropdown
-       │
-       ├── package.json
-       ├── vite.config.js
-       └── tailwind.config.js
+   ├── app/
+   │   ├── src/
+   │   │   ├── pages/
+   │   │   │   ├── Landing.jsx        # Module selector — 5 domain cards
+   │   │   │   ├── Medical.jsx        # ECG + EEG viewer (4 modes, playback, AI results)
+   │   │   │   ├── Acoustic.jsx       # Doppler simulator + analysis + drone detection
+   │   │   │   ├── Finance.jsx        # Candlestick + SMA + volume + GRU forecast
+   │   │   │   └── Microbiome.jsx     # IBD patient CSV analysis, per-patient cards
+   │   │   │
+   │   │   └── components/
+   │   │       ├── Sidebar.jsx        # Shared collapsible left sidebar wrapper
+   │   │       └── ui/
+   │   │           ├── ToggleTabs.jsx         # Horizontal tab switcher
+   │   │           ├── SliderControl.jsx      # Labeled range slider with live value
+   │   │           ├── FileUpload.jsx         # Drag-and-drop + click file input
+   │   │           ├── StatCard.jsx           # Titled result card container
+   │   │           ├── ChannelControl.jsx     # Per-channel visibility / color / thickness
+   │   │           └── ColormapSelector.jsx   # Plotly colormap dropdown
+   │   │
+   │   ├── package.json
+   │   ├── vite.config.js
+   │   └── tailwind.config.js
+   │   └── postcss.config.js
+   │   └── eslint.config.js
+   ├── assets/
+   │    ├── js/
+   │    └── css/
+   └── pages/
 ```
 ---
 <div align="center">
